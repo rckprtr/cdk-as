@@ -1,6 +1,6 @@
 # UNOFFICIAL DFINITY AssemblyScript CDK
 
-<>
+This is an expermental project to evaluate how AssemblyScript could be used as a CDK and should not be used for any production purposes.
 
 ## Getting Started
 

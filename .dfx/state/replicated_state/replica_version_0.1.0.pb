@@ -1,2 +1,0 @@
-
-http://example.dfninity.org/
