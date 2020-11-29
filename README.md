@@ -4,9 +4,11 @@ This is an expermental project to evaluate how AssemblyScript could be used as a
 
 ## Getting Started
 
-[Wabt](https://github.com/WebAssembly/wabt) is needed to parse WAT files exported by the build using wat2wasm
+[WABT](https://github.com/WebAssembly/wabt) is needed to parse WAT files exported by the build using wat2wasm
 
-```brew install wabt```
+```
+brew install wabt
+```
 
 Start DFINITY in a new terminal
 ```
