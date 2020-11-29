@@ -4,7 +4,7 @@ This is an expermental project to evaluate how AssemblyScript could be used as a
 
 ## Getting Started
 
-Wabt is needed to parse WAT files exported by the build
+[Wabt](https://github.com/WebAssembly/wabt) is needed to parse WAT files exported by the build using wat2wasm
 
 ```brew install wabt```
 
@@ -18,7 +18,7 @@ Next install the assemblyscript dependcies
 npm install
 ```
 
-Finall run the example
+Finally run the example
 ```
 npm run dfx_create
 npm run dfx_run
