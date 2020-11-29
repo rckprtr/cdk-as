@@ -1,0 +1,7 @@
+{
+    "canisters": {
+        "ashello": {
+            "main": "ashello"
+        }
+    }
+}
