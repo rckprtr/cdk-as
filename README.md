@@ -61,6 +61,15 @@ Rebuild and deploy
 npm run rebuild
 ```
 
+## How does it work?
+
+
+## Things I want to integrate.
+
+* [visitor-as](https://github.com/willemneal/visitor-as) - For Encode/Decode
+* [as-bignum](https://github.com/MaxGraey/as-bignum) - Currently LEB128 is returning an i64
+
+
 ## TODO
 
 * This list is not comprehensive
@@ -73,5 +82,6 @@ npm run rebuild
 - [ ] Canister Update
 
 ### Library
-- [ ] Returning Values (encoder)
+- [ ] Returning Values (Integer, String only supported)
+- [ ] Input Values (Integer, String only supported)
 - [ ] Implement IC Types (many here)

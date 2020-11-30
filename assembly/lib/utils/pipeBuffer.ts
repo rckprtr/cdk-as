@@ -1,3 +1,5 @@
+// based off https://gitlab.com/mjbecze/buffer-pipe
+
 class PipeBuffer {
 
     public buffer: Uint8Array;
@@ -22,6 +24,15 @@ class PipeBuffer {
         this.writeUint8Array(inputBuffer);
     }
 
+    writeArrayBuffer(inputBuffer: ArrayBuffer): void{
+        this.writeUint8Array(
+            Uint8Array.wrap(
+                inputBuffer,
+                0,
+                inputBuffer.byteLength
+            ));
+    }
+
     writeUint8Array(inputBuffer: Uint8Array) : void {
         this._bytesWrote += inputBuffer.length
 
@@ -30,6 +41,10 @@ class PipeBuffer {
         newBuffer.set(this.buffer)
         newBuffer.set(inputBuffer, this.buffer.byteLength);
         this.buffer = newBuffer;
+    }
+
+    append(pipe: PipeBuffer) : void {
+        this.writeUint8Array(pipe.buffer);
     }
 
     _load(buf: i32[]): Uint8Array{

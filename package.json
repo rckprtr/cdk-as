@@ -6,7 +6,7 @@
   "scripts": {
     "test": "node tests",
 
-    "build": "npm run build:gen && npm run build:as && node tools/add_spac_in_wat.js build/ashello.wat",
+    "build": "npm run build:gen && npm run build:as && node tools/add_spac_in_wat.js build/ashello.wat", 
     "build:wat": "wat2wasm build/ashello.wat -o build/ashello.wasm && cp build/ashello.wasm .dfx/local/canisters/ashello/ && dfx canister install --all --mode reinstall",
     "build:as": "asc assembly/index.ts -b build/ashello.wasm -t build/ashello.wat --sourceMap  --runtime none --target wasm32 --use abort=",
     "build:gen": "node tools/parse_actors.js assembly/counter.ts assembly/index.ts",
@@ -15,7 +15,7 @@
     "dfx_create": "dfx canister create ashello && mkdir -p .dfx/local/canisters/ashello/",
     "dfx_run": "npm run build && npm run build:wat && npm run dfx_test",
 
-    "dfx_test": "dfx canister call ashello echo '(\"World\")' --output raw"
+    "dfx_test": "dfx canister call ashello echo '(\"DFINITY\")'"
 
   },
   "author": "",

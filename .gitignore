@@ -119,3 +119,5 @@ dist
 
 # ignore generated index
 assembly/index.ts
+.dfx/
+build/*

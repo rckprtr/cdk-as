@@ -3,6 +3,7 @@ import * as LEB128 from './utils/LEB128';
 import { PipeBuffer } from './utils/pipeBuffer';
 
 const magicNumber = 'DIDL';
+const magicNumberBytes = [0x44, 0x49, 0x44, 0x4c];
 
 function writeMagic(): void {
     IC.msg_reply_data_append(String.UTF8.encode(magicNumber), 4);
@@ -37,7 +38,7 @@ function receiveDecoder(): Decoder {
     return new Decoder(Uint8Array.wrap(buf, 0, msg_size));
 }
 
-function respondeEncoder(): Encoder {
+function respondEncoder(): Encoder {
     return new Encoder();
 }
 
@@ -52,13 +53,31 @@ class Encoder {
     }
 
     init(): void {
-       
+       this.pipe.write(magicNumberBytes);
+       this.pipe.write([0]);
+       this.pipe.write([1]); //total
     }
 
-    encode<T>(): void{
+    write<T>(value: T): void{
+        var enocoded = this.encode<T>(value);
+        this.pipe.append(enocoded);
+    }
+
+    encode<T>(value: T): PipeBuffer{
+        var valuePipe = new PipeBuffer(); 
         if (isString<T>()) {
-           
+            let strBuffer = String.UTF8.encode(changetype<string>(value));
+            valuePipe.write([0x71]);
+            valuePipe.write([strBuffer.byteLength]);
+            valuePipe.writeArrayBuffer(strBuffer);
+            return valuePipe;
         }
+        return new PipeBuffer();
+    }
+
+    reply(): void{
+        writeBytes(this.pipe.buffer.buffer);
+        IC.msg_reply();
     }
 }
 
@@ -115,7 +134,7 @@ export {
     respondEmpty,
     receiveEmpty,
     receiveDecoder,
-    respondeEncoder,
+    respondEncoder,
     Encoder,
     Decoder
 }

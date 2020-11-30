@@ -86,9 +86,9 @@ actorClass.methods.forEach(m => {
             params: inputArgs.join(",")
         })
 
-        response = format(`let encoder = CALL.respondEncoder();
-    encoder.encode<{type}>(response);
-    MSG.respond();`, {
+        response = format(`let encoder = CALL.respondEncoder();;
+    encoder.write<{type}>(response);
+    encoder.reply();`, {
             type: m.returnType.typeName
         })
     }

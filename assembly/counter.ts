@@ -27,8 +27,9 @@ class CounterActor extends Actor {
   }
 
   @update()
-  echo(value: string): void{
+  echo(value: string): string{
     API.print("Hello " + value);
+    return value;
   }
 
 }
