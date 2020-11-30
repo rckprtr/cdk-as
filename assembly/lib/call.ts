@@ -34,7 +34,7 @@ function receiveDecoder(): Decoder {
     var msg_size: i32 = IC.msg_arg_data_size();
     var buf: ArrayBuffer = new ArrayBuffer(msg_size);
     IC.msg_arg_data_copy(buf, 0, msg_size);
-    
+
     return new Decoder(Uint8Array.wrap(buf, 0, msg_size));
 }
 
@@ -46,52 +46,66 @@ function respondEncoder(): Encoder {
 //Needs to take in a list of arguments
 class Encoder {
     public pipe: PipeBuffer;
+    public args: i32;
+    public argBuffer: PipeBuffer;
+    public idlTypes: PipeBuffer;
 
-    constructor(){
+
+    constructor() {
         this.pipe = new PipeBuffer();
+
+        this.idlTypes = new PipeBuffer();
+        this.argBuffer = new PipeBuffer();
+        this.args = 0;
+
         this.init();
     }
 
     init(): void {
-       this.pipe.write(magicNumberBytes);
-       this.pipe.write([0]);
-       this.pipe.write([1]); //total
+        this.pipe.write(magicNumberBytes);
+        this.pipe.write([0]);
     }
 
-    write<T>(value: T): void{
-        var enocoded = this.encode<T>(value);
-        this.pipe.append(enocoded);
+    write<T>(value: T): void {
+        this.args += 1;
+        this.encode<T>(value);
     }
 
-    encode<T>(value: T): PipeBuffer{
-        var valuePipe = new PipeBuffer(); 
+    encode<T>(value: T): void {
+
         if (isString<T>()) {
             let strBuffer = String.UTF8.encode(changetype<string>(value));
-            valuePipe.write([0x71]);
-            valuePipe.write([strBuffer.byteLength]);
-            valuePipe.writeArrayBuffer(strBuffer);
-            return valuePipe;
+            this.idlTypes.write([0x71]);
+            this.argBuffer.write([strBuffer.byteLength]);
+            this.argBuffer.writeArrayBuffer(strBuffer);
         }
-        return new PipeBuffer();
+        else if (isInteger<T>()) {
+            this.idlTypes.write([0x7C]);
+            this.argBuffer.append(LEB128.slebEncode(changetype<i64>(value)));
+        }
     }
 
-    reply(): void{
+    reply(): void {
+        this.pipe.write([this.args]);
+        this.pipe.append(this.idlTypes);
+        this.pipe.append(this.argBuffer);
         writeBytes(this.pipe.buffer.buffer);
         IC.msg_reply();
     }
 }
 
+
 class Decoder {
     public pipe: PipeBuffer;
-    
-    constructor(buffer: Uint8Array){
+
+    constructor(buffer: Uint8Array) {
         this.pipe = new PipeBuffer(buffer);
         this.init();
     }
 
-    init(): void{
+    init(): void {
         var magic = String.UTF8.decode(this.pipe.read(magicNumber.length).buffer);
-        if(magic != magicNumber){
+        if (magic != magicNumber) {
             throw new Error('Magic number not found: ' + magicNumber + ' results: ' + magic);
         }
 
@@ -99,11 +113,11 @@ class Decoder {
         const typeTableLength = LEB128.lebDecode(this.pipe);
 
         //TODO: do something with type tables
-      
+
 
         //read input types
         const inputTypesLength = LEB128.lebDecode(this.pipe);
-        const inputTypes : i32[] = [];
+        const inputTypes: i32[] = [];
 
         for (let i: i32 = 0; i < inputTypesLength; i++) {
             inputTypes.push(LEB128.slebDecode(this.pipe) as i32);
@@ -113,7 +127,7 @@ class Decoder {
         //this.IDLTypes = inputTypes.map<Type>(t => getType(<i32>t));
     }
 
-    decode<T>() : T {
+    decode<T>(): T {
 
         if (isInteger<T>()) {
             return <T>(LEB128.slebDecode(this.pipe));
@@ -124,6 +138,9 @@ class Decoder {
             const buf = this.pipe.read(len);
             return <T>(String.UTF8.decode(buf.buffer));
         }
+
+
+
 
         throw new Error("deocde type not found");
     }

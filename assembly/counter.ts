@@ -4,10 +4,10 @@ import * as API from "./lib/api"
 
 class CounterActor extends Actor {
 
-  public counter:i32 = 0;
+  public counter:i64 = 0;
 
   @update()
-  set(value: i32): void{
+  set(value: i64): void{
     this.counter = value;
   }
 
@@ -22,8 +22,9 @@ class CounterActor extends Actor {
   }
 
   @query()
-  get_value(): void {
+  get_value(): i64 {
     API.print("Counter Count: " + this.counter.toString());
+    return this.counter;
   }
 
   @update()
