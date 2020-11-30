@@ -1,8 +1,7 @@
 {
   "extends": "assemblyscript/std/assembly.json",
   "include": [
-    "./**/*.ts",
-    "../node_modules/@thi.ng/leb128"
+    "./**/*.ts"
   ],
   
 }
