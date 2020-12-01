@@ -67,13 +67,14 @@ actorClass.methods.forEach(m => {
         recieve += format(`
     let {name} = decoder.decode<{type}>();`, {
             name: arg.name,
-            type: arg.type.typeName
+            type: buildReturnType(arg.type)
         })
         inputArgs.push(arg.name);
     })
 
     let actor_call = "";
     let response = "CALL.respondEmpty();"
+
 
     if (m.returnType.typeName == 'void') {
         actor_call = format(actor_call_void_template, {
@@ -89,7 +90,7 @@ actorClass.methods.forEach(m => {
         response = format(`let encoder = CALL.respondEncoder();;
     encoder.write<{type}>(response);
     encoder.reply();`, {
-            type: m.returnType.typeName
+            type: buildReturnType(m.returnType)
         })
     }
 
@@ -102,6 +103,25 @@ actorClass.methods.forEach(m => {
     });
 });
 
+function buildReturnType(returnType){
+
+    //object as list Object[]
+    if(returnType.typeKind == 1){
+        return format('{type}[]',{
+            type: returnType.base.typeName
+        });
+    }
+
+    //object with types Object<T>
+    if(returnType.typeArguments.length > 0){
+        var template_typed = '{type}<{types}>'
+        return format('{type}<{types}>',{
+            type: returnType.typeName,
+            types: returnType.typeArguments.map(x=> x.typeName).join(',')
+        });
+    }
+    return returnType.typeName;
+}
 
 function getFunctionType(text) {
     if (text.indexOf("@query") != -1) {

@@ -1,6 +1,6 @@
 import * as IC from './ic0';
 import { printUint8Array } from './utils/helpers';
-
+import * as API from './api';
 import * as LEB128 from './utils/LEB128';
 import { PipeBuffer } from './utils/pipeBuffer';
 
@@ -50,7 +50,11 @@ class Encoder {
     public pipe: PipeBuffer;
     public args: i32;
     public argBuffer: PipeBuffer;
+
     public idlTypes: PipeBuffer;
+
+    public typeTableItems: i32;
+    public typeTable: PipeBuffer;
 
 
     constructor() {
@@ -60,12 +64,14 @@ class Encoder {
         this.argBuffer = new PipeBuffer();
         this.args = 0;
 
+        this.typeTableItems = 0;
+        this.typeTable = new PipeBuffer();
+
         this.init();
     }
 
     init(): void {
         this.pipe.write(magicNumberBytes);
-        this.pipe.write([0]);
     }
 
     write<T>(value: T): void {
@@ -73,29 +79,61 @@ class Encoder {
         this.encode<T>(value);
     }
 
-    encode<T>(value: T): void {
+    encode<T>(value: T, writeType: bool = true): void {
 
         if (isString<T>()) {
             let strBuffer = String.UTF8.encode(changetype<string>(value));
-            this.idlTypes.write([0x71]);
+
+            if(writeType)//TODO: I need a better pattern - use classes to encode/decode
+                this.idlTypes.write([0x71]);
+
             this.argBuffer.write([strBuffer.byteLength]);
             this.argBuffer.writeArrayBuffer(strBuffer);
         }
-        else if (isInteger<T>() && !isBoolean<T>()) {
-            this.idlTypes.write([0x7C]);
-            this.argBuffer.append(LEB128.slebEncode(changetype<i64>(value)));
-        }
         else if (isBoolean<T>()) {
             var boolBuffer = changetype<bool>(value);
-            this.idlTypes.write([0x7E]);
+
+            if(writeType)//TODO: I need a better pattern - use classes to encode/decode
+                this.idlTypes.write([0x7E]);
+
             this.argBuffer.write([boolBuffer ? 1 : 0])
+        }
+        else if (isInteger<T>()) {
+
+            if(writeType)//TODO: I need a better pattern - use classes to encode/decode
+                this.idlTypes.write([0x7C]);
+                
+            this.argBuffer.append(LEB128.slebEncode(changetype<i64>(value)));
+        }
+        else if (isArray<T>()) {
+            //TODO: Need to add a lookup for types, hardcoded to string for now.
+            this.addTypeTableItem(0x6D, getIDLType<valueof<T>>());
+            var genericArray = changetype<Array<valueof<T>>>(value);
+            this.argBuffer.write([0, genericArray.length])
+            for (let x: i32 = 0; x < genericArray.length; x++) {
+                this.encode<valueof<T>>(genericArray[x], false);
+            }
         }
     }
 
+    addTypeTableItem(tableType: i32, argType: i32): void {
+        this.typeTableItems++;
+        this.typeTable.write([tableType, argType]);
+    }
+
     reply(): void {
+
+        if (this.typeTableItems > 0) {
+            this.pipe.write([this.typeTableItems]);
+            this.pipe.append(this.typeTable);
+        } else {
+            this.pipe.write([0]);
+        }
+
         this.pipe.write([this.args]);
         this.pipe.append(this.idlTypes);
         this.pipe.append(this.argBuffer);
+        printUint8Array(this.pipe.buffer);
         writeBytes(this.pipe.buffer.buffer);
         IC.msg_reply();
     }
@@ -106,9 +144,10 @@ class Decoder {
     public pipe: PipeBuffer;
 
     constructor(buffer: Uint8Array) {
-        printUint8Array(buffer);
         this.pipe = new PipeBuffer(buffer);
+        printUint8Array(this.pipe.buffer);
         this.init();
+        
     }
 
     init(): void {
@@ -117,11 +156,18 @@ class Decoder {
             throw new Error('Magic number not found: ' + magicNumber + ' results: ' + magic);
         }
 
-        //read type table length
+        //read type tables
         const typeTableLength = LEB128.lebDecode(this.pipe);
-
-        //TODO: do something with type tables
-
+        for (let i = 0; i < typeTableLength; i++) {
+            const type = <i32>LEB128.slebDecode(this.pipe);
+            switch (type) {
+                case -19 /* Vector */: {
+                    const t = LEB128.slebDecode(this.pipe); //string, int, bool ...
+                    //Im not doing anything with these yet.
+                    break;
+                }
+            }
+        }
 
         //read input types
         const inputTypesLength = LEB128.lebDecode(this.pipe);
@@ -130,13 +176,12 @@ class Decoder {
         for (let i: i32 = 0; i < inputTypesLength; i++) {
             inputTypes.push(LEB128.slebDecode(this.pipe) as i32);
         }
-
         //TODO: Need to map the IDL types over to assist the encoder/decoder in the future
         //this.IDLTypes = inputTypes.map<Type>(t => getType(<i32>t));
     }
 
     decode<T>(): T {
-        if(isBoolean<T>()){
+        if (isBoolean<T>()) {
             return <T>(this.pipe.read(1)[0] == 0);
         }
 
@@ -149,8 +194,31 @@ class Decoder {
             const buf = this.pipe.read(len);
             return <T>(String.UTF8.decode(buf.buffer));
         }
+
+        if (isArray<T>()) {
+            var arrayResult = new Array<valueof<T>>();
+            const lens = <i32>LEB128.lebDecode(this.pipe);
+            for (var i: i32 = 0; i < lens; i++) {
+                arrayResult.push(this.decode<valueof<T>>());
+            }
+            return <T>arrayResult;
+        }
+
         throw new Error("deocde type not found");
     }
+}
+
+function getIDLType<T>(): i32 {
+    if (isString<T>()) {
+        return 0x71;
+    }
+    else if (isBoolean<T>()) {
+        return 0x7E;
+    }
+    else if (isInteger<T>()) {
+        return 0x7C;
+    }
+    return 0;
 }
 
 
