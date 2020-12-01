@@ -12,8 +12,9 @@ function lebEncode(value: number): PipeBuffer {
 
     const pipe = new PipeBuffer();
     while (true) {
-        const i = value % base;
-        value = value / base;
+        
+        const i = NativeMath.mod(value,base);
+        value = div(value,base);
         if (value == zero) {
             pipe.write([<i32>i]);
             break;

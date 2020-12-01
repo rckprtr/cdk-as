@@ -33,6 +33,11 @@ class CounterActor extends Actor {
     return value;
   }
 
+  @query()
+  boolTest(value: bool): bool{
+    return value;
+  }
+
 }
 
 export {

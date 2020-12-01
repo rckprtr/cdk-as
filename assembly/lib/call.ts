@@ -1,4 +1,6 @@
 import * as IC from './ic0';
+import { printUint8Array } from './utils/helpers';
+
 import * as LEB128 from './utils/LEB128';
 import { PipeBuffer } from './utils/pipeBuffer';
 
@@ -79,9 +81,14 @@ class Encoder {
             this.argBuffer.write([strBuffer.byteLength]);
             this.argBuffer.writeArrayBuffer(strBuffer);
         }
-        else if (isInteger<T>()) {
+        else if (isInteger<T>() && !isBoolean<T>()) {
             this.idlTypes.write([0x7C]);
             this.argBuffer.append(LEB128.slebEncode(changetype<i64>(value)));
+        }
+        else if (isBoolean<T>()) {
+            var boolBuffer = changetype<bool>(value);
+            this.idlTypes.write([0x7E]);
+            this.argBuffer.write([boolBuffer ? 1 : 0])
         }
     }
 
@@ -99,6 +106,7 @@ class Decoder {
     public pipe: PipeBuffer;
 
     constructor(buffer: Uint8Array) {
+        printUint8Array(buffer);
         this.pipe = new PipeBuffer(buffer);
         this.init();
     }
@@ -128,6 +136,9 @@ class Decoder {
     }
 
     decode<T>(): T {
+        if(isBoolean<T>()){
+            return <T>(this.pipe.read(1)[0] == 0);
+        }
 
         if (isInteger<T>()) {
             return <T>(LEB128.slebDecode(this.pipe));
@@ -138,10 +149,6 @@ class Decoder {
             const buf = this.pipe.read(len);
             return <T>(String.UTF8.decode(buf.buffer));
         }
-
-
-
-
         throw new Error("deocde type not found");
     }
 }
