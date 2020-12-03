@@ -1,83 +1,109 @@
-
-import * as LEB128 from '../utils/LEB128'
+import * as LEB128 from '../utils/LEB128';
+import * as API from '../api';
 import { PipeBuffer } from '../utils/pipeBuffer';
 
 
 //TODO: Map types, setup classes... a lot of things
 
-class Type {
-    decodeValue(pipe: PipeBuffer) : number {
-        throw new Error("Decoding failed of type: " + "");
+class IntType {
+    public encodeType: u8;
+
+    decodeValue<T>(pipe: PipeBuffer) : T {
+        throw new Error("Not Implemented");
+    }
+    encodeValue<T>(value: T) : PipeBuffer {
+        throw new Error("Not Implemented");
     }
 }
 
-class IntClass extends Type {
-   encodeValue(val: i64) : PipeBuffer {
-       return LEB128.slebEncode(val);
-   }
-   encodeType() : PipeBuffer {
-       return LEB128.slebEncode(-4 /* Int */);
-   }
-   decodeValue(pipe: PipeBuffer) : number {
-       return LEB128.slebDecode(pipe);
-   }
-   get name() : string {
-       return 'int';
-   }
-}
-
-
-function getType(typeId: number) : Type {
-    if (typeId < -24) {
-        throw new Error('future value not supported');
+class FixedIntClass extends IntType {
+    private bits: i8 = 0;
+    constructor(bits: i8, encodeType: u8) {
+        super();
+        this.bits = bits;
+        this.encodeType = encodeType;
     }
-    if (typeId < 0) {
-        switch (typeId) {
-            // case -1:
-            //     return exports.Null;
-            // case -2:
-            //     return exports.Bool;
-            // case -3:
-            //     return exports.Nat;
-            case -4:
-                return new IntClass();
-            // case -5:
-            //     return exports.Nat8;
-            // case -6:
-            //     return exports.Nat16;
-            // case -7:
-            //     return exports.Nat32;
-            // case -8:
-            //     return exports.Nat64;
-            // case -9:
-            //     return exports.Int8;
-            // case -10:
-            //     return exports.Int16;
-            // case -11:
-            //     return exports.Int32;
-            // case -12:
-            //     return exports.Int64;
-            // case -13:
-            //     return exports.Float32;
-            // case -14:
-            //     return exports.Float64;
-            // case -15:
-            //     return exports.Text;
-            // case -16:
-            //     return exports.Reserved;
-            // case -17:
-            //     return exports.Empty;
-            // case -24:
-            //     return exports.Principal;
-            default:
-                throw new Error('Illegal op_code: ' + typeId);
+    encodeValue<T>(value: T) : PipeBuffer {
+        if(this.bits == 64){
+            return LEB128.EncodeLEB128Signed(<i64>value);
+        } else {
+            return LEB128.writeIntLE(<i64>value, this.bits / 8);
         }
     }
-    return new Type();
+    decodeValue<T>(pipe: PipeBuffer) : T {
+        const num = LEB128.readIntLE(pipe, this.bits / 8);
+        if (this.bits <= 32) {
+            return <T>num;
+        }
+        else {
+            return <T>num;
+        }
+    }
 }
+
+class FixedNatClass extends IntType {
+    private bits: i8 = 0;
+    
+    constructor(bits: i8, encodeType: u8) {
+        super();
+        this.bits = bits;
+        this.encodeType = encodeType;
+    }
+    encodeValue<T>(value: T) : PipeBuffer {
+        if(this.bits == 64){
+            return LEB128.EncodeLEB128Unsigned(<u64>value);
+        } else {
+        return LEB128.writeIntLE(<i64>value, this.bits / 8);
+        }
+    }
+    decodeValue<T>(pipe: PipeBuffer) : T {
+        const num = LEB128.readUIntLE(pipe, this.bits / 8);
+        if (this.bits <= 32) {
+            return <T>num;
+        }
+        else {
+            return <T>num;
+        }
+    }
+
+}
+
+
+
+function getIntegerIDLValueType<T>(value: T) : IntType{
+    if (isInteger<T>()) {
+        if (value instanceof i8) {
+            return new FixedIntClass(8,0x77);
+        }
+        else if(value instanceof u8){
+            return new FixedNatClass(8,0x7B)
+        }
+        else if(value instanceof i16){
+            return new FixedIntClass(16,0x76);
+        }
+        else if(value instanceof u16){
+            return new FixedNatClass(16,0x7a)
+        }
+        else if(value instanceof i32){
+            return new FixedIntClass(32,0x75);
+        }
+        else if(value instanceof u32){
+            return new FixedNatClass(32,0x79)
+        }
+        else if(value instanceof i64){
+            return new FixedIntClass(64,0x7C); //some issues here
+        }
+        else if(value instanceof u64){
+            return new FixedNatClass(64,0x7C); //some issues here should be 0x78
+        }
+    }
+    return new FixedIntClass(64, 0x7C);
+}
+
 
 
 export {
-    getType,
-    IntClass
+    FixedIntClass,
+    FixedNatClass,
+    getIntegerIDLValueType
 }

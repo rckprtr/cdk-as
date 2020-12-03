@@ -1,106 +1,148 @@
+import { print } from "../api";
 import { PipeBuffer } from "./pipeBuffer";
 
-//TODO: use as-bignum
-
-function lebEncode(value: number): PipeBuffer {
-
-    var zero = 0;
-    var base = 0x80;
-    if (value < zero) {
-        throw new Error('Cannot leb encode negative values.');
-    }
-
+//TODO: v128 possibly since the largest dfinity float/int is 64?
+function EncodeLEB128Unsigned(value: u64): PipeBuffer {
     const pipe = new PipeBuffer();
-    while (true) {
-        
-        const i = NativeMath.mod(value,base);
-        value = div(value,base);
-        if (value == zero) {
-            pipe.write([<i32>i]);
-            break;
-        }
-        else {
-            pipe.write([<i32>(i|base)]);
-        }
+
+    let more: bool = true;
+    let bytes: u8 = 0;
+    let chunck: u8 = 0;
+
+    while (more) {
+        chunck = <u8>(value & 0x7f);
+        value >>= 7;
+
+        more = value != 0;
+        if (more) { chunck |= 0x80; }
+        pipe.write([<u8>chunck])
+        bytes += 1;
     }
     return pipe;
 }
 
-function lebDecode(pipe: PipeBuffer): i64 {
-    let shift = 0;
-    let value:i64 = 0;
-    let byte:i64 = 0;
-    do {
-        byte = <i64>pipe.read(1)[0];
-        value = value + ((byte & 0x7f) * <i64>Math.pow(2,shift));
+function DecodeLEB128Unsigned(pipe: PipeBuffer): u64 {
+
+    let bytes: u8 = 0;
+
+    let value: u64 = 0;
+    let shift: u64 = 0;
+    let more: bool = true;
+
+    while (more) {
+        let b: u8 = pipe.read(1)[0];
+
+        bytes += 1;
+
+        more = (b & 0x80) != 0;
+        let chunk: u64 = b & 0x7f;
+        value |= chunk << shift;
         shift += 7;
-    } while (byte >= 0x80);
+    }
+
     return value;
 }
 
-function slebEncode(value: i64) : PipeBuffer {
+function EncodeLEB128Signed(value: i64): PipeBuffer {
 
-    var zero = 0;
-    var base = 0x80;
-  
-    const isNeg = value < 0;
-    if (isNeg) {
-        value =  <i64>(Math.abs(value as f64) - 1);
-    }
-    const pipe = new PipeBuffer();
-    while (true) {
+    let bytes: u8 = 0;
+    let more: bool = true;
+    let signBitSet: bool = true;
 
-        const i = getLowerBytes(value, base, isNeg);
-       
-        value = value / base;
-        if ((isNeg && value == zero && (i & 0x40) !== zero) || 
-            (!isNeg && value == zero && (i & 0x40) === zero)) {
-            pipe.write([<i32>i]);
-            break;
-        }
-        else {
-            pipe.write([<i32>(i | base)]);
-        }
-    }
-    
+    var pipe = new PipeBuffer();
+
+    while (more) {
+        let chunk:u8 = <u8>(value & 0x7f);
+        value >>= 7;
+
+        signBitSet = (chunk & 0x40) != 0; 
+        more = !((value == 0 && !signBitSet) || (value == -1 && signBitSet));
+        if (more) { chunk |= 0x80; }
+
+        pipe.write([chunk]);
+        bytes += 1;
+    };
+
     return pipe;
 }
 
-function getLowerBytes(num: i64,base:i64, isNeg: bool) : i64 {
-    const bytes = num % base;
-    if (isNeg) {
-        return 0x80 - bytes - 1;
-    }
-    else {
-        return bytes;
-    }
+function DecodeLEB128Signed(pipe: PipeBuffer): i64 {
+
+    let bytes: u8 = 0;
+    let value:i64 = 0;
+    let shift: i64 = 0;
+    let more: bool = true;
+    let signBitSet: bool = true;
+
+    while(more) {
+        let b:u8 = pipe.read(1)[0];
+
+        bytes += 1;
+
+        more = (b & 0x80) != 0;
+        signBitSet = (b & 0x40) != 0;
+
+        let chunk:i64 = b & 0x7f;
+        value |= chunk << shift;
+        shift += 7;
+    };
+
+    return value;
 }
 
-function slebDecode(pipe: PipeBuffer): i64 {
+function writeUIntLE(value: u64, byteLength: i8) : PipeBuffer {
+    return writeIntLE(value, byteLength); //this truncates over U_MAX_INT
+}
+
+function writeIntLE(value: i64, byteLength: i8) : PipeBuffer {
   
-    const pipeView = pipe.buffer;
-    let len = 0;
-    for (; len < pipeView.byteLength; len++) {
-        if (pipeView[len] < 0x80) {
-            // If it's a positive number, we reuse lebDecode.
-            if ((pipeView[len] & 0x40) === 0) {
-                return lebDecode(pipe);
-            }
-            break;
+    const pipe = new PipeBuffer();
+    let i = 0;
+    let mul = 256;
+    let sub = 0;
+    let byte = value % mul;
+    pipe.write([<u8>byte]);
+    while (++i < byteLength) {
+        if (value < 0 && sub === 0 && byte !== 0) {
+            sub = 1;
         }
+        byte = ((value /mul) - sub) % 256
+        pipe.write([<u8>byte]);
+        mul = mul * 256;
     }
-    const bytes = pipe.read(len + 1);
-    let value = 0;
-    var base = 0x80;
-    for (let i = bytes.byteLength - 1; i >= 0; i--) {
-        value = value * base + (0x80 - (bytes[i] & 0x7f) - 1);
+    return pipe;
+}
+
+function readUIntLE(pipe: PipeBuffer, byteLength:i8) : u64 {
+    let val = <u8>pipe.read(1)[0];
+    let mul = 1;
+    let i = 0;
+    while (++i < byteLength) {
+        mul = mul * 256;
+        let byte = <u8>pipe.read(1)[0];
+        val = val + (mul * byte);
     }
-    return (value * -1) - 1;
+    return val;
+}
+
+function readIntLE(pipe: PipeBuffer, byteLength:i8) : i64 {
+    let val = readUIntLE(pipe, byteLength);
+    const mul = Math.pow(2,8 * (byteLength - 1) + 7)
+    if (val > mul) {
+        val -= mul * 2;
+    }
+    return val;
 }
 
 export {
-    lebEncode,
-    lebDecode,
-    slebEncode,
-    slebDecode
+    EncodeLEB128Unsigned,
+    DecodeLEB128Unsigned,
+
+    EncodeLEB128Signed,
+    DecodeLEB128Signed,
+
+    writeIntLE,
+    readUIntLE,
+    readIntLE,
+    writeUIntLE
 }

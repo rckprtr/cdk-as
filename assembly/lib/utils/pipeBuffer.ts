@@ -19,7 +19,7 @@ class PipeBuffer {
         return data
     }
 
-    write(buf: i32[]) : void {
+    write(buf: u8[]) : void {
         var inputBuffer = this._load(buf);
         this.writeUint8Array(inputBuffer);
     }
@@ -47,7 +47,7 @@ class PipeBuffer {
         this.writeUint8Array(pipe.buffer);
     }
 
-    _load(buf: i32[]): Uint8Array{
+    _load(buf: u8[]): Uint8Array{
         var newBuffer = new Uint8Array(buf.length);
         for (let i: i32 = 0; i < buf.length; i++) {
             newBuffer[i] = buf[i]

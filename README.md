@@ -61,6 +61,78 @@ Rebuild and deploy
 npm run rebuild
 ```
 
+## What is supported?
+
+###DFINITY IC
+
+|  | Command |
+| --- | --- |
+| [x] | call_data_append |
+| [ ] | call_funds_add |
+| [ ] | call_new |
+| [ ] | call_perform |
+| [ ] | canister_balance |
+| [ ] | canister_self_copy |
+| [ ] | canister_self_size |
+| [x] | debug_print |
+| [x] | msg_arg_data_copy |
+| [x] | msg_arg_data_size |
+| [x] | msg_caller_copy |
+| [x] | msg_caller_size |
+| [ ] | msg_funds_available |
+| [ ] | msg_funds_refunded |
+| [ ] | msg_funds_accept |
+| [ ] | msg_reject_code |
+| [ ] | msg_reject_msg_size |
+| [ ] | msg_reject_msg_copy |
+| [ ] | msg_reject |
+| [x] | msg_reply_data_append |
+| [x] | msg_reply |
+| [ ] | trap |
+| [ ] | stable_write |
+| [ ] | stable_read |
+| [ ] | stable_size |
+| [ ] | stable_grow |
+| [x] | time |
+
+###DFINITY Primitives
+
+|  | DFX Primitive | AS Primitive |
+| --- | --- | --- |
+| [ ] | Null | null |
+| [x] | Bool | bool |
+| [x] | Nat | u32 |
+| [x] | Int | i32 |
+| [x] | Nat8 | u8 |
+| [x] | Nat16 | u16 |
+| [x] | Nat32 | u32 |
+| [x] | Nat64 | u64* |
+| [x] | Int8 | i8 |
+| [x] | Int16 | i16 |
+| [x] | Int32 | i32 |
+| [x] | Int64 | i64 |
+| [ ] | Float32 | f32 |
+| [ ] | Float32 | f64 |
+| [x] | Text | string |
+| [ ] | Reserved | u64 |
+| [ ] | Empty | N/A |
+
+
+
+* Issue: u64 encoding as a MAX_i64
+
+### DFINITY Types
+|  | DFX Types | AS Type |
+| --- | --- | --- |
+| [ ] | Opt | TBD |
+| [x] | Vec | Array |
+| [ ] | Record | TBD |
+| [ ] | Variant | TBD |
+
+
+* TBD Field Types, Reference Types, Method Types
+
+
 ## How does it work?
 
 TBD
@@ -68,21 +140,3 @@ TBD
 ## Things I want to integrate.
 
 * [visitor-as](https://github.com/willemneal/visitor-as) - For Encode/Decode
-* [as-bignum](https://github.com/MaxGraey/as-bignum) - Currently LEB128 is returning an i64
-
-
-## TODO
-
-* This list is not comprehensive
-
-### IC
-- [ ] Stable Store (stable_write, stable_read, stable_grow, stable_size)
-- [ ] Trap
-- [ ] Tokens (funds, balances...)
-- [ ] Cross canister calls
-- [ ] Canister Update
-
-### Library
-- [ ] Returning Values (Integer, String only supported)
-- [ ] Input Values (Integer, String only supported)
-- [ ] Implement IC Types (many here)

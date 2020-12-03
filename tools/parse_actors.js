@@ -123,6 +123,7 @@ function buildReturnType(returnType){
     return returnType.typeName;
 }
 
+//TODO: suport Object<Object<Object<T>>>
 function getFunctionType(text) {
     if (text.indexOf("@query") != -1) {
         return "canister_query";

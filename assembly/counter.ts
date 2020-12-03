@@ -54,6 +54,7 @@ class CounterActor extends Actor {
         return value;
     }
 
+
     @query()
     stringList(value: string[]): string[] {
         for(var i:i32 = 0;i<value.length;i++){
@@ -62,9 +63,46 @@ class CounterActor extends Actor {
         return value;
     }
 
-    blah(value: string[]): void {
-
+    @query()
+    inti32(value: i32): i32 {
+        return value;
     }
+
+    @query()
+    inti64(value: i64): i64 {
+        return value;
+    }
+
+    @query()
+    intu32(value: u32): u32 {
+        return value;
+    }
+
+    @query()
+    intu64(value: u64): u64 {
+        return value;
+    }
+
+    @query()
+    inti8(value: i8): i8 {
+        return value;
+    }
+
+    @query()
+    intu8(value: u8): u8 {
+        return value;
+    }
+
+    @query()
+    inti16(value: i16): i16 {
+        return value;
+    }
+
+    @query()
+    intu16(value: u16): u16 {
+        return value;
+    }
+    
 }
 
 export {
