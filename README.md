@@ -67,18 +67,18 @@ npm run rebuild
 
 |  | Command |
 | --- | --- |
-| <ul><li> &#9745 </li></ul>| call_data_append |
+| <ul><li> [x] </li></ul>| call_data_append |
 | <ul><li> [ ] </li></ul>| call_funds_add |
 | <ul><li> [ ] </li></ul>| call_new |
 | <ul><li> [ ] </li></ul>| call_perform |
 | <ul><li> [ ] </li></ul>| canister_balance |
 | <ul><li> [ ] </li></ul>| canister_self_copy |
 | <ul><li> [ ] </li></ul>| canister_self_size |
-| <ul><li> &#9745 </li></ul>| debug_print |
-| <ul><li> &#9745 </li></ul>| msg_arg_data_copy |
-| <ul><li> &#9745 </li></ul>| msg_arg_data_size |
-| <ul><li> &#9745 </li></ul>| msg_caller_copy |
-| <ul><li> &#9745 </li></ul>| msg_caller_size |
+| <ul><li> [x] </li></ul>| debug_print |
+| <ul><li> [x] </li></ul>| msg_arg_data_copy |
+| <ul><li> [x] </li></ul>| msg_arg_data_size |
+| <ul><li> [x] </li></ul>| msg_caller_copy |
+| <ul><li> [x] </li></ul>| msg_caller_size |
 | <ul><li> [ ] </li></ul>| msg_funds_available |
 | <ul><li> [ ] </li></ul>| msg_funds_refunded |
 | <ul><li> [ ] </li></ul>| msg_funds_accept |
@@ -86,34 +86,34 @@ npm run rebuild
 | <ul><li> [ ] </li></ul>| msg_reject_msg_size |
 | <ul><li> [ ] </li></ul>| msg_reject_msg_copy |
 | <ul><li> [ ] </li></ul>| msg_reject |
-| <ul><li> &#9745 </li></ul>| msg_reply_data_append |
-| <ul><li> &#9745 </li></ul>| msg_reply |
+| <ul><li> [x] </li></ul>| msg_reply_data_append |
+| <ul><li> [x] </li></ul>| msg_reply |
 | <ul><li> [ ] </li></ul>| trap |
 | <ul><li> [ ] </li></ul>| stable_write |
 | <ul><li> [ ] </li></ul>| stable_read |
 | <ul><li> [ ] </li></ul>| stable_size |
 | <ul><li> [ ] </li></ul>| stable_grow |
-| <ul><li> &#9745 </li></ul>| time |
+| <ul><li> [x] </li></ul>| time |
 
 ### DFINITY Primitives
 
 |  | DFX Primitive | AS Primitive |
 | --- | --- | --- |
 | <ul><li> [ ] </li></ul>| Null | null |
-| <ul><li> &#9745 </li></ul>| Bool | bool |
-| <ul><li> &#9745 </li></ul>| Nat | u32 |
-| <ul><li> &#9745 </li></ul>| Int | i32 |
-| <ul><li> &#9745 </li></ul>| Nat8 | u8 |
-| <ul><li> &#9745 </li></ul>| Nat16 | u16 |
-| <ul><li> &#9745 </li></ul>| Nat32 | u32 |
-| <ul><li> &#9745 </li></ul>| Nat64 | u64* |
-| <ul><li> &#9745 </li></ul>| Int8 | i8 |
-| <ul><li> &#9745 </li></ul>| Int16 | i16 |
-| <ul><li> &#9745 </li></ul>| Int32 | i32 |
-| <ul><li> &#9745 </li></ul>| Int64 | i64 |
+| <ul><li> [x] </li></ul>| Bool | bool |
+| <ul><li> [x] </li></ul>| Nat | u32 |
+| <ul><li> [x] </li></ul>| Int | i32 |
+| <ul><li> [x] </li></ul>| Nat8 | u8 |
+| <ul><li> [x] </li></ul>| Nat16 | u16 |
+| <ul><li> [x] </li></ul>| Nat32 | u32 |
+| <ul><li> [x] </li></ul>| Nat64 | u64* |
+| <ul><li> [x] </li></ul>| Int8 | i8 |
+| <ul><li> [x] </li></ul>| Int16 | i16 |
+| <ul><li> [x] </li></ul>| Int32 | i32 |
+| <ul><li> [x] </li></ul>| Int64 | i64 |
 | <ul><li> [ ] </li></ul>| Float32 | f32 |
 | <ul><li> [ ] </li></ul>| Float32 | f64 |
-| <ul><li> &#9745 </li></ul>| Text | string |
+| <ul><li> [x] </li></ul>| Text | string |
 | <ul><li> [ ] </li></ul>| Reserved | u64 |
 | <ul><li> [ ] </li></ul>| Empty | N/A |
 
@@ -125,7 +125,7 @@ npm run rebuild
 |  | DFX Types | AS Type |
 | --- | --- | --- |
 | <ul><li> [ ] </li></ul>| Opt | TBD |
-| <ul><li> &#9745 </li></ul>| Vec | Array |
+| <ul><li> [x] </li></ul>| Vec | Array |
 | <ul><li> [ ] </li></ul>| Record | TBD |
 | <ul><li> [ ] </li></ul>| Variant | TBD |
 
