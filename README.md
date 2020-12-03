@@ -63,59 +63,59 @@ npm run rebuild
 
 ## What is supported?
 
-###DFINITY IC
+### DFINITY IC
 
 |  | Command |
 | --- | --- |
-| [x] | call_data_append |
-| [ ] | call_funds_add |
-| [ ] | call_new |
-| [ ] | call_perform |
-| [ ] | canister_balance |
-| [ ] | canister_self_copy |
-| [ ] | canister_self_size |
-| [x] | debug_print |
-| [x] | msg_arg_data_copy |
-| [x] | msg_arg_data_size |
-| [x] | msg_caller_copy |
-| [x] | msg_caller_size |
-| [ ] | msg_funds_available |
-| [ ] | msg_funds_refunded |
-| [ ] | msg_funds_accept |
-| [ ] | msg_reject_code |
-| [ ] | msg_reject_msg_size |
-| [ ] | msg_reject_msg_copy |
-| [ ] | msg_reject |
-| [x] | msg_reply_data_append |
-| [x] | msg_reply |
-| [ ] | trap |
-| [ ] | stable_write |
-| [ ] | stable_read |
-| [ ] | stable_size |
-| [ ] | stable_grow |
-| [x] | time |
+| - [x] | call_data_append |
+| - [ ] | call_funds_add |
+| - [ ] | call_new |
+| - [ ] | call_perform |
+| - [ ] | canister_balance |
+| - [ ] | canister_self_copy |
+| - [ ] | canister_self_size |
+| - [x] | debug_print |
+| - [x] | msg_arg_data_copy |
+| - [x] | msg_arg_data_size |
+| - [x] | msg_caller_copy |
+| - [x] | msg_caller_size |
+| - [ ] | msg_funds_available |
+| - [ ] | msg_funds_refunded |
+| - [ ] | msg_funds_accept |
+| - [ ] | msg_reject_code |
+| - [ ] | msg_reject_msg_size |
+| - [ ] | msg_reject_msg_copy |
+| - [ ] | msg_reject |
+| - [x] | msg_reply_data_append |
+| - [x] | msg_reply |
+| - [ ] | trap |
+| - [ ] | stable_write |
+| - [ ] | stable_read |
+| - [ ] | stable_size |
+| - [ ] | stable_grow |
+| - [x] | time |
 
-###DFINITY Primitives
+### DFINITY Primitives
 
 |  | DFX Primitive | AS Primitive |
 | --- | --- | --- |
-| [ ] | Null | null |
-| [x] | Bool | bool |
-| [x] | Nat | u32 |
-| [x] | Int | i32 |
-| [x] | Nat8 | u8 |
-| [x] | Nat16 | u16 |
-| [x] | Nat32 | u32 |
+| - [ ] | Null | null |
+| - [x] | Bool | bool |
+| - [x] | Nat | u32 |
+| - [x] | Int | i32 |
+| - [x] | Nat8 | u8 |
+| - [x] | Nat16 | u16 |
+| - [x] | Nat32 | u32 |
 | [x] | Nat64 | u64* |
-| [x] | Int8 | i8 |
-| [x] | Int16 | i16 |
-| [x] | Int32 | i32 |
-| [x] | Int64 | i64 |
-| [ ] | Float32 | f32 |
-| [ ] | Float32 | f64 |
-| [x] | Text | string |
-| [ ] | Reserved | u64 |
-| [ ] | Empty | N/A |
+| - [x] | Int8 | i8 |
+| - [x] | Int16 | i16 |
+| - [x] | Int32 | i32 |
+| - [x] | Int64 | i64 |
+| - [ ] | Float32 | f32 |
+| - [ ] | Float32 | f64 |
+| - [x] | Text | string |
+| - [ ] | Reserved | u64 |
+| - [ ] | Empty | N/A |
 
 
 
@@ -124,10 +124,10 @@ npm run rebuild
 ### DFINITY Types
 |  | DFX Types | AS Type |
 | --- | --- | --- |
-| [ ] | Opt | TBD |
-| [x] | Vec | Array |
-| [ ] | Record | TBD |
-| [ ] | Variant | TBD |
+| - [ ] | Opt | TBD |
+| - [x] | Vec | Array |
+| - [ ] | Record | TBD |
+| - [ ] | Variant | TBD |
 
 
 * TBD Field Types, Reference Types, Method Types
