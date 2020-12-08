@@ -73,66 +73,66 @@ npm run test
 
 |  | Command |
 | --- | --- |
-| <ul><li> [x] </li></ul>| call_data_append |
-| <ul><li> [ ] </li></ul>| call_funds_add |
-| <ul><li> [ ] </li></ul>| call_new |
-| <ul><li> [ ] </li></ul>| call_perform |
-| <ul><li> [ ] </li></ul>| canister_balance |
-| <ul><li> [ ] </li></ul>| canister_self_copy |
-| <ul><li> [ ] </li></ul>| canister_self_size |
-| <ul><li> [x] </li></ul>| canister_update |
-| <ul><li> [x] </li></ul>| canister_query |
-| <ul><li> [x] </li></ul>| debug_print |
-| <ul><li> [x] </li></ul>| msg_arg_data_copy |
-| <ul><li> [x] </li></ul>| msg_arg_data_size |
-| <ul><li> [x] </li></ul>| msg_caller_copy |
-| <ul><li> [x] </li></ul>| msg_caller_size |
-| <ul><li> [ ] </li></ul>| msg_funds_available |
-| <ul><li> [ ] </li></ul>| msg_funds_refunded |
-| <ul><li> [ ] </li></ul>| msg_funds_accept |
-| <ul><li> [ ] </li></ul>| msg_reject_code |
-| <ul><li> [ ] </li></ul>| msg_reject_msg_size |
-| <ul><li> [ ] </li></ul>| msg_reject_msg_copy |
-| <ul><li> [ ] </li></ul>| msg_reject |
-| <ul><li> [x] </li></ul>| msg_reply_data_append |
-| <ul><li> [x] </li></ul>| msg_reply |
-| <ul><li> [ ] </li></ul>| trap |
-| <ul><li> [ ] </li></ul>| stable_write |
-| <ul><li> [ ] </li></ul>| stable_read |
-| <ul><li> [ ] </li></ul>| stable_size |
-| <ul><li> [ ] </li></ul>| stable_grow |
-| <ul><li> [x] </li></ul>| time |
+| ✅ | call_data_append |
+| :heavy_minus_sign: | call_funds_add |
+| :heavy_minus_sign: | call_new |
+| :heavy_minus_sign: | call_perform |
+| :heavy_minus_sign: | canister_balance |
+| :heavy_minus_sign: | canister_self_copy |
+| :heavy_minus_sign: | canister_self_size |
+| ✅ | canister_update |
+| ✅ | canister_query |
+| ✅ | debug_print |
+| ✅ | msg_arg_data_copy |
+| ✅ | msg_arg_data_size |
+| ✅ | msg_caller_copy |
+| ✅ | msg_caller_size |
+| :heavy_minus_sign: | msg_funds_available |
+| :heavy_minus_sign: | msg_funds_refunded |
+| :heavy_minus_sign: | msg_funds_accept |
+| :heavy_minus_sign: | msg_reject_code |
+| :heavy_minus_sign: | msg_reject_msg_size |
+| :heavy_minus_sign: | msg_reject_msg_copy |
+| :heavy_minus_sign: | msg_reject |
+| ✅ | msg_reply_data_append |
+| ✅ | msg_reply |
+| :heavy_minus_sign: | trap |
+| :heavy_minus_sign: | stable_write |
+| :heavy_minus_sign: | stable_read |
+| :heavy_minus_sign: | stable_size |
+| :heavy_minus_sign: | stable_grow |
+| ✅ | time |
 
 ### DFINITY Primitives
 
 |  | DFX Primitive | AS Primitive |
 | --- | --- | --- |
-| <ul><li> [ ] </li></ul>| Null | null |
-| <ul><li> [x] </li></ul>| Bool | bool |
-| <ul><li> [x] </li></ul>| Nat | u32 |
-| <ul><li> [x] </li></ul>| Int | i32 |
-| <ul><li> [x] </li></ul>| Nat8 | u8 |
-| <ul><li> [x] </li></ul>| Nat16 | u16 |
-| <ul><li> [x] </li></ul>| Nat32 | u32 |
-| <ul><li> [x] </li></ul>| Nat64 | u64 |
-| <ul><li> [x] </li></ul>| Int8 | i8 |
-| <ul><li> [x] </li></ul>| Int16 | i16 |
-| <ul><li> [x] </li></ul>| Int32 | i32 |
-| <ul><li> [x] </li></ul>| Int64 | i64 |
-| <ul><li> [x] </li></ul>| Float32 | f32 |
-| <ul><li> [x] </li></ul>| Float32 | f64 |
-| <ul><li> [x] </li></ul>| Text | string |
-| <ul><li> [ ] </li></ul>| Reserved | N/A |
-| <ul><li> [ ] </li></ul>| Empty | N/A |
+| :heavy_minus_sign: | Null | null |
+| ✅ | Bool | bool |
+| ✅ | Nat | u32 |
+| ✅ | Int | i32 |
+| ✅ | Nat8 | u8 |
+| ✅ | Nat16 | u16 |
+| ✅ | Nat32 | u32 |
+| ✅ | Nat64 | u64 |
+| ✅ | Int8 | i8 |
+| ✅ | Int16 | i16 |
+| ✅ | Int32 | i32 |
+| ✅ | Int64 | i64 |
+| ✅ | Float32 | f32 |
+| ✅ | Float32 | f64 |
+| ✅ | Text | string |
+| :heavy_minus_sign: | Reserved | N/A |
+| :heavy_minus_sign: | Empty | N/A |
 
 
 ### DFINITY Types
 |  | DFX Types | AS Type |
 | --- | --- | --- |
-| <ul><li> [ ] </li></ul>| Opt | TBD |
-| <ul><li> [x] </li></ul>| Vec | Array (1D) |
-| <ul><li> [ ] </li></ul>| Record | TBD |
-| <ul><li> [ ] </li></ul>| Variant | TBD |
+| :heavy_minus_sign: | Opt | TBD |
+| ✅ | Vec | Array (1D) |
+| :heavy_minus_sign: | Record | TBD |
+| :heavy_minus_sign: | Variant | TBD |
 
 
 * TBD Field Types, Reference Types, Method Types
