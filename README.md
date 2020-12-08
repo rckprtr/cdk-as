@@ -61,6 +61,12 @@ Rebuild and deploy
 npm run rebuild
 ```
 
+## Tests
+
+```
+npm run test
+```
+
 ## What is supported?
 
 ### DFINITY IC
@@ -74,6 +80,8 @@ npm run rebuild
 | <ul><li> [ ] </li></ul>| canister_balance |
 | <ul><li> [ ] </li></ul>| canister_self_copy |
 | <ul><li> [ ] </li></ul>| canister_self_size |
+| <ul><li> [x] </li></ul>| canister_update |
+| <ul><li> [x] </li></ul>| canister_query |
 | <ul><li> [x] </li></ul>| debug_print |
 | <ul><li> [x] </li></ul>| msg_arg_data_copy |
 | <ul><li> [x] </li></ul>| msg_arg_data_size |
@@ -106,32 +114,32 @@ npm run rebuild
 | <ul><li> [x] </li></ul>| Nat8 | u8 |
 | <ul><li> [x] </li></ul>| Nat16 | u16 |
 | <ul><li> [x] </li></ul>| Nat32 | u32 |
-| <ul><li> [x] </li></ul>| Nat64 | u64* |
+| <ul><li> [x] </li></ul>| Nat64 | u64 |
 | <ul><li> [x] </li></ul>| Int8 | i8 |
 | <ul><li> [x] </li></ul>| Int16 | i16 |
 | <ul><li> [x] </li></ul>| Int32 | i32 |
 | <ul><li> [x] </li></ul>| Int64 | i64 |
-| <ul><li> [ ] </li></ul>| Float32 | f32 |
-| <ul><li> [ ] </li></ul>| Float32 | f64 |
+| <ul><li> [x] </li></ul>| Float32 | f32 |
+| <ul><li> [x] </li></ul>| Float32 | f64 |
 | <ul><li> [x] </li></ul>| Text | string |
-| <ul><li> [ ] </li></ul>| Reserved | u64 |
+| <ul><li> [ ] </li></ul>| Reserved | N/A |
 | <ul><li> [ ] </li></ul>| Empty | N/A |
 
-
-
-* Issue: u64 encoding as a MAX_i64
 
 ### DFINITY Types
 |  | DFX Types | AS Type |
 | --- | --- | --- |
 | <ul><li> [ ] </li></ul>| Opt | TBD |
-| <ul><li> [x] </li></ul>| Vec | Array |
+| <ul><li> [x] </li></ul>| Vec | Array (1D) |
 | <ul><li> [ ] </li></ul>| Record | TBD |
 | <ul><li> [ ] </li></ul>| Variant | TBD |
 
 
 * TBD Field Types, Reference Types, Method Types
 
+## Limitations
+
+TBD
 
 ## How does it work?
 

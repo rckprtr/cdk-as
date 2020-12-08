@@ -1,5 +1,7 @@
 import { Actor, query, update } from "./lib/actor";
 import * as API from "./lib/api"
+import { Decoder } from "./lib/call";
+import { Uint8ArrayFromU8Array } from "./lib/utils/helpers";
 
 
 class CounterActor extends Actor {
@@ -29,12 +31,12 @@ class CounterActor extends Actor {
 
     @update()
     echo(value: string): string {
-        API.print("Hello " + value);
         return value;
     }
 
     @query()
     boolTest(value: bool): bool {
+        
         return value;
     }
 
@@ -48,6 +50,14 @@ class CounterActor extends Actor {
 
     @query()
     intArray(value: Array<i64>): Array<i64> {
+        for(var i:i32 = 0;i<value.length;i++){
+            API.print("Array value: " + value[i].toString());
+        }
+        return value;
+    }
+
+    @query()
+    uintArray(value: Array<u64>): Array<u64> {
         for(var i:i32 = 0;i<value.length;i++){
             API.print("Array value: " + value[i].toString());
         }
@@ -102,8 +112,19 @@ class CounterActor extends Actor {
     intu16(value: u16): u16 {
         return value;
     }
+
+    @query()
+    f64(value: f64): f64 {
+        return value;
+    }
+
+    @query()
+    f32(value: f32): f32 {
+        return value;
+    }
     
 }
+
 
 export {
     CounterActor

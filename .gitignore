@@ -121,3 +121,7 @@ dist
 assembly/index.ts
 .dfx/
 build/*
+
+# tests
+assembly/lib/__tests__/**/*.map
+assembly/lib/__tests__/**/*.wat

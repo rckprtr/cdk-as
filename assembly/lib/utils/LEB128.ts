@@ -15,7 +15,7 @@ function EncodeLEB128Unsigned(value: u64): PipeBuffer {
 
         more = value != 0;
         if (more) { chunck |= 0x80; }
-        pipe.write([<u8>chunck])
+        pipe.write([chunck])
         bytes += 1;
     }
     return pipe;
@@ -66,28 +66,26 @@ function EncodeLEB128Signed(value: i64): PipeBuffer {
     return pipe;
 }
 
+
 function DecodeLEB128Signed(pipe: PipeBuffer): i64 {
 
-    let bytes: u8 = 0;
-    let value:i64 = 0;
-    let shift: i64 = 0;
-    let more: bool = true;
-    let signBitSet: bool = true;
-
-    while(more) {
-        let b:u8 = pipe.read(1)[0];
-
-        bytes += 1;
-
-        more = (b & 0x80) != 0;
-        signBitSet = (b & 0x40) != 0;
-
-        let chunk:i64 = b & 0x7f;
-        value |= chunk << shift;
-        shift += 7;
-    };
-
-    return value;
+    const pipeView = pipe.buffer;
+    let len = 0;
+    for (; len < pipeView.byteLength; len++) {
+        if (pipeView[len] < 0x80) {
+            if ((pipeView[len] & 0x40) === 0) {
+                return DecodeLEB128Unsigned(pipe);
+            }
+            break;
+        }
+    }
+    const bytes = pipe.read(len + 1);
+    let value = 0;
+    var base = 0x80;
+    for (let i = bytes.byteLength - 1; i >= 0; i--) {
+        value = value * base + (0x80 - (bytes[i] & 0x7f) - 1);
+    }
+    return (value * -1) - 1;
 }
 
 function writeUIntLE(value: u64, byteLength: i8) : PipeBuffer {
@@ -114,7 +112,7 @@ function writeIntLE(value: i64, byteLength: i8) : PipeBuffer {
 }
 
 function readUIntLE(pipe: PipeBuffer, byteLength:i8) : u64 {
-    let val = <u8>pipe.read(1)[0];
+    let val = <u64>pipe.read(1)[0];
     let mul = 1;
     let i = 0;
     while (++i < byteLength) {
@@ -126,8 +124,8 @@ function readUIntLE(pipe: PipeBuffer, byteLength:i8) : u64 {
 }
 
 function readIntLE(pipe: PipeBuffer, byteLength:i8) : i64 {
-    let val = readUIntLE(pipe, byteLength);
-    const mul = Math.pow(2,8 * (byteLength - 1) + 7)
+    let val = <i64>readUIntLE(pipe, byteLength);
+    const mul = <i64>Math.pow(2,8 * (byteLength - 1) + 7)
     if (val > mul) {
         val -= mul * 2;
     }
@@ -144,5 +142,5 @@ export {
     writeIntLE,
     readUIntLE,
     readIntLE,
-    writeUIntLE
+    writeUIntLE,
 }

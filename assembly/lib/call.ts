@@ -3,7 +3,7 @@ import { printUint8Array } from './utils/helpers';
 import * as API from './api';
 import * as LEB128 from './utils/LEB128';
 import { PipeBuffer } from './utils/pipeBuffer';
-import { FixedIntClass, getIntegerIDLValueType } from './idl/types';
+import { FixedIntClass, getIntegerIDLValueType, getIDLType, getFloatIDLValueTypes } from './idl/types';
 
 const magicNumber = 'DIDL';
 const magicNumberBytes: u8[] = [0x44, 0x49, 0x44, 0x4c];
@@ -41,8 +41,14 @@ function receiveDecoder(): Decoder {
     return new Decoder(Uint8Array.wrap(buf, 0, msg_size));
 }
 
-function respondEncoder(): Encoder {
+function getRespondEncoder(): Encoder {
     return new Encoder();
+}
+
+function sendRespondEncoder(encoder: Encoder): void {
+    var data = encoder.build();
+    writeBytes(data.buffer);
+    IC.msg_reply();
 }
 
 //This pattern wont work as is.  
@@ -107,6 +113,15 @@ class Encoder {
 
             this.argBuffer.append(intType.encodeValue<T>(<T>value));
         }
+        else if(isFloat<T>()){
+
+            var floatType = getFloatIDLValueTypes<T>(value);
+
+            if (writeType)//TODO: I need a better pattern - use classes to encode/decode
+                    this.idlTypes.write([floatType.encodeType]);
+
+            this.argBuffer.append(floatType.encodeValue<T>(value));
+        }
         else if (isArray<T>()) {
             //TODO: Need to add a lookup for types, hardcoded to string for now.
             this.addTypeTableItem(0x6D, getIDLType<valueof<T>>());
@@ -123,7 +138,7 @@ class Encoder {
         this.typeTable.write([tableType, argType]);
     }
 
-    reply(): void {
+    build(): Uint8Array {
 
         if (this.typeTableItems > 0) {
             this.pipe.write([this.typeTableItems]);
@@ -135,9 +150,7 @@ class Encoder {
         this.pipe.write([this.args]);
         this.pipe.append(this.idlTypes);
         this.pipe.append(this.argBuffer);
-        printUint8Array(this.pipe.buffer);
-        writeBytes(this.pipe.buffer.buffer);
-        IC.msg_reply();
+        return this.pipe.buffer;
     }
 }
 
@@ -147,9 +160,8 @@ class Decoder {
 
     constructor(buffer: Uint8Array) {
         this.pipe = new PipeBuffer(buffer);
-        printUint8Array(this.pipe.buffer);
+        //printUint8Array(this.pipe.buffer);
         this.init();
-
     }
 
     init(): void {
@@ -161,7 +173,7 @@ class Decoder {
         //read type tables
         const typeTableLength = <i32>LEB128.DecodeLEB128Unsigned(this.pipe);
         for (let i : i32 = 0; i < typeTableLength; i++) {
-            const type = <i32>LEB128.DecodeLEB128Signed(this.pipe);
+            const type = <i8>LEB128.DecodeLEB128Signed(this.pipe);
             switch (type) {
                 case -19 /* Vector */: {
                     const t = LEB128.DecodeLEB128Signed(this.pipe); //string, int, bool ...
@@ -188,13 +200,22 @@ class Decoder {
         }
 
         if (isInteger<T>()) {
-            return <T>(LEB128.DecodeLEB128Signed(this.pipe));
+            var val:T = changetype<T>(<T>(0));
+            var idlType = getIntegerIDLValueType(val);
+            
+            return <T>idlType.decodeValue<T>(this.pipe);
         }
 
         if (isString<T>()) {
             const len = <i32>LEB128.DecodeLEB128Unsigned(this.pipe);
             const buf = this.pipe.read(len);
             return <T>(String.UTF8.decode(buf.buffer));
+        }
+
+        if(isFloat<T>()){
+            var val:T = changetype<T>(<T>(0));
+            var idlType = getFloatIDLValueTypes(val);
+            return idlType.decodeValue<T>(this.pipe);
         }
 
         if (isArray<T>()) {
@@ -210,32 +231,14 @@ class Decoder {
     }
 }
 
-//used by arrays
-function getIDLType<T>(): u8 {
-    if (isString<T>()) {
-        return 0x71;
-    }
-    else if (isBoolean<T>()) {
-        return 0x7E;
-    }
-    else if (isInteger<T>()) {
-        var val:T = changetype<T>(<T>(0));
-        if (val instanceof i32) {
-            return 0x75;
-        } else {
-            return 0x7C;
-        }
-    }
-    return 0;
-}
-
 
 
 export {
     respondEmpty,
     receiveEmpty,
     receiveDecoder,
-    respondEncoder,
+    getRespondEncoder,
+    sendRespondEncoder,
     Encoder,
     Decoder
 }

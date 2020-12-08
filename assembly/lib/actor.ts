@@ -1,6 +1,11 @@
-class Actor {
+import { Principal } from "./principal";
 
-    constructor(){
+class Actor {
+    public owner: Principal;
+    public time: i64;
+    constructor(owner: Principal, time:i64){
+        this.owner = owner;
+        this.time = time;
         //TODO: set owner, tokens?, time?
     }
 }
