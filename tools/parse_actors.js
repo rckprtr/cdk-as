@@ -2,13 +2,24 @@ var tsFileStruct = require("ts-file-parser");
 var fs = require('fs');
 var format = require("string-template");
 
+var parseRecords = require("./parse_records");
+var recordGen = require("./create_record_gen");
+var IDL = require("./idlTypes");
+
 var inputArgs = process.argv.slice(2);
 
 var inputFile = inputArgs[0];
-var outputFile = inputArgs[1];
+var recordsFile = inputArgs[1];
+var outputIndexFile = 'assembly/index.ts'
+var outputRecordFile = 'assembly/index.records.ts'
 
 var decls = fs.readFileSync(inputFile).toString();
 var jsonStructure = tsFileStruct.parseStruct(decls, {}, inputFile);
+
+var recordDecls = fs.readFileSync(recordsFile).toString();
+var recordsJsonStructure = tsFileStruct.parseStruct(recordDecls, {}, recordsFile);
+
+var recordMap = parseRecords.buildRecordMap(recordsJsonStructure);
 
 var did_template = `service : {
 {did_methods}
@@ -22,11 +33,17 @@ var template = `
 import * as CALL from "./lib/call";
 import * as API from "./lib/api";
 import * as COUNTER from "./counter";
+{model_imports}
+import { initRegistry } from "./index.records";
+
+initRegistry();
 
 var actor: COUNTER.{actor_class_name};
 {canister_init}
 {canister_methods}
 `
+
+var model_import_template = `import { {typeNames} } from "./models";`
 
 var canister_init_template = `
 export function canister_init(): void {
@@ -64,7 +81,6 @@ actorClass.methods.forEach(m => {
     var funcType = getFunctionType(m.text);
 
     if (funcType) {
-
 
         let recieve = m.arguments.length == 0 ?
             "CALL.receiveEmpty();" :
@@ -121,13 +137,22 @@ actorClass.methods.forEach(m => {
         did_methods_template += format(
             `\t{func_name}: ({input_types}) -> ({return_type}){call_type};\n`, {
             func_name: m.name,
-            input_types: inputArgTypes.map(x => toIDLType(x)).join(","),
+            input_types: inputArgTypes.map(x => IDL.toIDLType(x)).join(","),
             return_type: returnType == 'void' ? '' : buildDIDType(m.returnType),
             call_type: getIDLCallType(funcType, returnType)
         }
         )
     }
 });
+
+function recordMapContains(records, name){
+    for(var i = 0; i < records.length; i++) {
+        if (records[i].name == name) {
+            return records[i];
+        }
+    }
+    return null;
+}
 
 function getIDLCallType(funcType, returnType){
     if(returnType == 'void'){
@@ -137,34 +162,6 @@ function getIDLCallType(funcType, returnType){
         return ' query'
     } 
     return '';
-}
-
-function toIDLType(type) {
-    switch (type.toLowerCase()) {
-        case "string":
-            return "text"
-        case "u8":
-            return "nat8"
-        case "u16":
-            return "nat16"
-        case "u32":
-            return "nat32"
-        case "u64":
-            return "nat64"
-        case "i8":
-            return "int8"
-        case "i16":
-            return "int16"
-        case "i32":
-            return "int32"
-        case "i64":
-            return "int64"
-        case "f32":
-            return "float32"
-        case "f64":
-            return "float64"
-    }
-    return type;
 }
 
 function buildAsType(returnType) {
@@ -186,22 +183,27 @@ function buildAsType(returnType) {
     return returnType.typeName;
 }
 
-function buildDIDType(returnType) {
+function buildDIDType(types) {
 
     //object as list Object[]
-    if (returnType.typeKind == 1) {
+    if (types.typeKind == 1) {
         return format('vec {type}', {
-            type: toIDLType(returnType.base.typeName)
+            type: IDL.toIDLType(types.base.typeName)
         });
     }
 
     //object with types Object<T>
-    if (returnType.typeArguments.length > 0) {
+    if (types.typeArguments.length > 0) {
         return format('vec {type}', {
-            type: returnType.typeArguments.map(x => toIDLType((x.typeName))).join(';')
+            type: types.typeArguments.map(x => IDL.toIDLType((x.typeName))).join(';')
         });
     }
-    return toIDLType(returnType.typeName);
+    var record = recordMapContains(recordMap, types.typeName);
+    if(record){
+        return record.did;
+    }
+
+    return IDL.toIDLType(types.typeName);
 }
 
 //TODO: suport Object<Object<Object<T>>>
@@ -219,14 +221,20 @@ canister_init_template = format(canister_init_template, {
     actor_class_name: actorClass.name
 })
 
-
 var output = format(template, {
     canister_init: canister_init_template,
     canister_methods: method_template,
-    actor_class_name: actorClass.name
+    actor_class_name: actorClass.name,
+    model_imports: format(model_import_template, {typeNames: recordMap.map(x => x.name).join(",")})
 })
 
-fs.writeFile(outputFile, output, function (err) {
+fs.writeFile(outputIndexFile, output, function (err) {
+    if (err) return console.log(err);
+});
+
+
+var record_gen = recordGen.buildRecordGenerator(recordMap);
+fs.writeFile(outputRecordFile, record_gen, function (err) {
     if (err) return console.log(err);
 });
 

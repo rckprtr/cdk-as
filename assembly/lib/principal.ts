@@ -2,9 +2,9 @@
 
 
 class Principal {
-    public id: Uint8Array;
-    constructor(id: Uint8Array){
-        this.id = id;
+    public buffer: Uint8Array;
+    constructor(buffer: Uint8Array){
+        this.buffer = buffer;
     }
 }
 

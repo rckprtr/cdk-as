@@ -4,6 +4,7 @@ import * as API from './api';
 import * as LEB128 from './utils/LEB128';
 import { PipeBuffer } from './utils/pipeBuffer';
 import { FixedIntClass, getIntegerIDLValueType, getIDLType, getFloatIDLValueTypes } from './idl/types';
+import { RecordRegistery } from './recordRegistry';
 
 const magicNumber = 'DIDL';
 const magicNumberBytes: u8[] = [0x44, 0x49, 0x44, 0x4c];
@@ -88,6 +89,8 @@ class Encoder {
 
     encode<T>(value: T, writeType: bool = true): void {
 
+        var registry = RecordRegistery.getInstance();
+
         if (isString<T>()) {
             let strBuffer = String.UTF8.encode(changetype<string>(value));
 
@@ -131,11 +134,24 @@ class Encoder {
                 this.encode<valueof<T>>(genericArray[x], false);
             }
         }
+        else if(registry.has<T>()){
+
+            if (writeType)//TODO: I need a better pattern - use classes to encode/decode
+                    this.idlTypes.write([0]); //why do records and variants need this?
+
+            registry.encode<T>(this, value);
+        }
+       
     }
 
     addTypeTableItem(tableType: u8, argType: u8): void {
         this.typeTableItems++;
         this.typeTable.write([tableType, argType]);
+    }
+
+    addTypeTableItemRecord(pipe: PipeBuffer): void {
+        this.typeTableItems++;
+        this.typeTable.append(pipe);
     }
 
     build(): Uint8Array {
@@ -180,6 +196,15 @@ class Decoder {
                     //Im not doing anything with these yet.
                     break;
                 }
+                case -20 /* Record */: {
+                    const fields = [];
+                    let objectLength = LEB128.DecodeLEB128Unsigned(this.pipe);
+                    while (objectLength--) {
+                        const hash = LEB128.DecodeLEB128Unsigned(this.pipe);
+                        const t = LEB128.DecodeLEB128Signed(this.pipe);
+                    }
+                    break;
+                }
             }
         }
 
@@ -198,27 +223,23 @@ class Decoder {
         if (isBoolean<T>()) {
             return <T>(this.pipe.read(1)[0] == 0);
         }
-
-        if (isInteger<T>()) {
+        else if (isInteger<T>()) {
             var val:T = changetype<T>(<T>(0));
             var idlType = getIntegerIDLValueType(val);
             
             return <T>idlType.decodeValue<T>(this.pipe);
         }
-
-        if (isString<T>()) {
+        else if (isString<T>()) {
             const len = <i32>LEB128.DecodeLEB128Unsigned(this.pipe);
             const buf = this.pipe.read(len);
             return <T>(String.UTF8.decode(buf.buffer));
         }
-
-        if(isFloat<T>()){
+        else if(isFloat<T>()){
             var val:T = changetype<T>(<T>(0));
             var idlType = getFloatIDLValueTypes(val);
             return idlType.decodeValue<T>(this.pipe);
         }
-
-        if (isArray<T>()) {
+        else if (isArray<T>()) {
             var arrayResult = new Array<valueof<T>>();
             const lens = <i32>LEB128.DecodeLEB128Unsigned(this.pipe);
             for (var i: i32 = 0; i < lens; i++) {
@@ -226,7 +247,12 @@ class Decoder {
             }
             return <T>arrayResult;
         }
-
+        //check record registry
+        var registry = RecordRegistery.getInstance();
+        if(registry.has<T>()){
+            return registry.decode<T>(this);
+        }
+            
         throw new Error("deocde type not found");
     }
 }

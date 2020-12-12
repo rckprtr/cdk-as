@@ -73,73 +73,75 @@ npm run test
 
 |  | Command |
 | --- | --- |
-| ✅ | call_data_append |
-| :heavy_minus_sign: | call_funds_add |
-| :heavy_minus_sign: | call_new |
-| :heavy_minus_sign: | call_perform |
-| :heavy_minus_sign: | canister_balance |
-| :heavy_minus_sign: | canister_self_copy |
-| :heavy_minus_sign: | canister_self_size |
-| ✅ | canister_update |
-| ✅ | canister_query |
-| ✅ | debug_print |
-| ✅ | msg_arg_data_copy |
-| ✅ | msg_arg_data_size |
-| ✅ | msg_caller_copy |
-| ✅ | msg_caller_size |
-| :heavy_minus_sign: | msg_funds_available |
-| :heavy_minus_sign: | msg_funds_refunded |
-| :heavy_minus_sign: | msg_funds_accept |
-| :heavy_minus_sign: | msg_reject_code |
-| :heavy_minus_sign: | msg_reject_msg_size |
-| :heavy_minus_sign: | msg_reject_msg_copy |
-| :heavy_minus_sign: | msg_reject |
-| ✅ | msg_reply_data_append |
-| ✅ | msg_reply |
-| :heavy_minus_sign: | trap |
-| :heavy_minus_sign: | stable_write |
-| :heavy_minus_sign: | stable_read |
-| :heavy_minus_sign: | stable_size |
-| :heavy_minus_sign: | stable_grow |
-| ✅ | time |
+| ✅ | `call_data_append` |
+| :heavy_minus_sign: | `call_funds_add` |
+| :heavy_minus_sign: | `call_new` |
+| :heavy_minus_sign: | `call_perform` |
+| ✅ | `canister_balance` |
+| ✅ | `canister_self_copy` |
+| ✅ | `canister_self_size` |
+| ✅ | `canister_update` |
+| ✅ | `canister_query` |
+| ✅ | `debug_print` |
+| ✅ | `msg_arg_data_copy` |
+| ✅ | `msg_arg_data_size` |
+| ✅ | `msg_caller_copy` |
+| ✅ | `msg_caller_size` |
+| ✅ | `msg_funds_available` |
+| :heavy_minus_sign: | `msg_funds_refunded` |
+| :heavy_minus_sign: | `msg_funds_accept` |
+| :heavy_minus_sign: | `msg_reject_code` |
+| :heavy_minus_sign: | `msg_reject_msg_size` |
+| :heavy_minus_sign: | `msg_reject_msg_copy` |
+| :heavy_minus_sign: | `msg_reject` |
+| ✅ | `msg_reply_data_append` |
+| ✅ | `msg_reply` |
+| ✅ | `trap` |
+| :heavy_minus_sign: | `stable_write` |
+| :heavy_minus_sign: | `stable_read` |
+| :heavy_minus_sign: | `stable_size` |
+| :heavy_minus_sign: | `stable_grow` |
+| ✅ | `time` |
 
 ### DFINITY Primitives
 
 |  | DFX Primitive | AS Primitive |
 | --- | --- | --- |
-| :heavy_minus_sign: | Null | null |
-| ✅ | Bool | bool |
-| ✅ | Nat | u32 |
-| ✅ | Int | i32 |
-| ✅ | Nat8 | u8 |
-| ✅ | Nat16 | u16 |
-| ✅ | Nat32 | u32 |
-| ✅ | Nat64 | u64 |
-| ✅ | Int8 | i8 |
-| ✅ | Int16 | i16 |
-| ✅ | Int32 | i32 |
-| ✅ | Int64 | i64 |
-| ✅ | Float32 | f32 |
-| ✅ | Float32 | f64 |
-| ✅ | Text | string |
-| :heavy_minus_sign: | Reserved | N/A |
-| :heavy_minus_sign: | Empty | N/A |
+| :heavy_minus_sign: | `Null` | `null` |
+| ✅ | `Bool` | `bool` |
+| :heavy_minus_sign: | `Nat` | `u∞` |
+| ✅ | `Nat8` | `u8` |
+| ✅ | `Nat16` | `u16` |
+| ✅ | `Nat32` | `u32` |
+| ✅ | `Nat64` | `u64` |
+| :heavy_minus_sign: | `Int` | `i∞` |
+| ✅ | `Int8` | `i8` |
+| ✅ | `Int16` | `i16` |
+| ✅ | `Int32` | `i32` |
+| ✅ | `Int64` | `i64` |
+| ✅ | `Float32` | `f32` |
+| ✅ | `Float32` | `f64` |
+| ✅ | `Text` | `string` |
+| :heavy_minus_sign: | `Reserved` | `N/A` |
+| :heavy_minus_sign: | `Empty` | `N/A` |
 
 
 ### DFINITY Types
 |  | DFX Types | AS Type |
 | --- | --- | --- |
-| :heavy_minus_sign: | Opt | TBD |
-| ✅ | Vec | Array (1D) |
-| :heavy_minus_sign: | Record | TBD |
-| :heavy_minus_sign: | Variant | TBD |
+| :heavy_minus_sign: | `Opt` | `TBD` |
+| ✅ | `Vec` | `Array (1D)` |
+| ✅ | `Record` | `TBD (No Relationships Yet)` |
+| :heavy_minus_sign: | `Variant` | `TBD` |
 
 
 * TBD Field Types, Reference Types, Method Types
 
 ## Limitations
 
-TBD
+### Int and Nat
+
+In DFINITY Int and Nat are represented as arbitrary length signed/unsighed integers.  BigInt's are currently not supported by `cdk-as`.
 
 ## How does it work?
 

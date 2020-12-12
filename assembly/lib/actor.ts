@@ -18,9 +18,14 @@ function query() : void {
     //lets the canister know this is a canister_query
 }
 
+function record() : void {
+    //lets the canister know this is a canister_query
+}
+
 
 export {
     Actor,
     query,
-    update
+    update,
+    record
 }

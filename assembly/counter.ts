@@ -1,8 +1,9 @@
 import { Actor, query, update } from "./lib/actor";
 import * as API from "./lib/api"
 import { Decoder } from "./lib/call";
-import { Uint8ArrayFromU8Array } from "./lib/utils/helpers";
-
+import { printUint8Array, Uint8ArrayFromU8Array } from "./lib/utils/helpers";
+import { Profile } from "./models";
+import * as HASH from "./lib/utils/hash";
 
 class CounterActor extends Actor {
 
@@ -43,7 +44,7 @@ class CounterActor extends Actor {
     @query()
     stringArray(value: Array<string>): Array<string> {
         for(var i:i32 = 0;i<value.length;i++){
-            API.print("Array value: " + value[i]);
+            API.print("String Array value: " + value[i]);
         }
         return value;
     }
@@ -51,7 +52,7 @@ class CounterActor extends Actor {
     @query()
     intArray(value: Array<i64>): Array<i64> {
         for(var i:i32 = 0;i<value.length;i++){
-            API.print("Array value: " + value[i].toString());
+            API.print("Int Array value: " + value[i].toString());
         }
         return value;
     }
@@ -122,7 +123,34 @@ class CounterActor extends Actor {
     f32(value: f32): f32 {
         return value;
     }
-    
+
+    @update()
+    trapTest(): void {
+        API.trap("😵 Trap Test 😵");
+    }
+
+    @update()
+    fundsAvailable(): u64 {
+        var funds = API.fundsAvailable(this.owner);
+        API.print("Available Funds: " + funds.toString());
+        return funds;
+    }
+
+    @query()
+    canisterId(): void {
+        printUint8Array(API.canisterId().buffer);
+    }
+
+    @query()
+    canisterBalance(): u64 {
+        return API.canisterBalance(API.canisterId());
+    }
+
+    @query()
+    getProfile(profile: Profile): Profile {
+        API.print(profile.name + " " + profile.email + " " + profile.age.toString());
+        return profile;
+    }
 }
 
 
