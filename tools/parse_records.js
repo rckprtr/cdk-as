@@ -49,15 +49,38 @@ function buildRecordMap(jsonData) {
                 type: field.didType
             })
         });
-
+        var results =results.trim();
         return format(did_template, {
-            inputs: "{" + results.trim() + "}"
+            inputs: `{${results}}`
         })
-
     }
 
-    return mapRecords(records);
+    //something recursive
+    function mapRelationships(records) {
+        var history = [];
+        records.forEach(record => {
+            record = buildRelationships(record, records, history);
+        });
+    }
+    
+    function buildRelationships(record, records, history) {
+        record.fields.forEach(field => {
+            if (IDL.toIDLType(field.asType) == field.asType) {
+                var results = records.find(recs => recs.name == field.asType);
+                if(results){
+                    record.did = record.did.replace(field.asType, results.did)
+                    console.log(record);
+                }
+            }
+        });
+        return record;
+    }
+
+    var recordResults = mapRecords(records);
+    mapRelationships(recordResults);
+    return recordResults;
 }
+
 
 
 //I need this to sort??

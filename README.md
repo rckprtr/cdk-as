@@ -131,7 +131,7 @@ npm run test
 | --- | --- | --- |
 | :heavy_minus_sign: | `Opt` | `TBD` |
 | ✅ | `Vec` | `Array (1D)` |
-| ✅ | `Record` | `TBD (No Relationships Yet)` |
+| ✅ | `Record` | `Models (No Relationships Yet)` |
 | :heavy_minus_sign: | `Variant` | `TBD` |
 
 

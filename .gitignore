@@ -121,6 +121,9 @@ dist
 assembly/index.ts
 assembly/index.records.ts
 
+#exclude didc
+tools/didc
+
 .dfx/
 build/*
 

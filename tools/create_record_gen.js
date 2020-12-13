@@ -14,8 +14,7 @@ import { PipeBuffer } from "./lib/utils/pipeBuffer";
 export function initRegistry() : RecordRegistery {
     var registry = RecordRegistery.getInstance();
 
-    {registry}
-
+{registry}
     return registry;
 }
 
@@ -25,20 +24,18 @@ export function initRegistry() : RecordRegistery {
 
 model_import_template = `import { {typeNames} } from "./models";`
 
-register_template = `registry.registerHandler<{typeName}>({typeName}Decode, {typeName}Encode);
-`
+register_template = "\tregistry.registerHandler<{typeName}>({typeName}Decode, {typeName}Encode);\n"
 
 decoder_template = `
 function {typeName}Decode(decoder: Decoder): {typeName}{
     var {varName} = changetype<{typeName}>(0);
-    {properties}
+{properties}
     return {varName};
 }
 
 `
 
-decoder_prop_template = `{varName}.{prop} = decoder.decode<{type}>();
-`
+decoder_prop_template = "\t{varName}.{prop} = decoder.decode<{type}>();\n"
 
 encoder_template = `
 function {typeName}Encode(encoder: Encoder, {varName}: {typeName}): void {
@@ -46,21 +43,18 @@ function {typeName}Encode(encoder: Encoder, {varName}: {typeName}): void {
     pipe.write([0x6C]); //record type
     pipe.write([{fieldLength}]); //amount of items
 
-    {writeItems}
+{writeItems}
 
     encoder.addTypeTableItemRecord(pipe);
-
-    {encodeItems}
+{encodeItems}
 }`
 
 encoder_write_item = `
-pipe.append(EncodeLEB128Signed(idlHash("{field}")));
-pipe.write([getIDLType<{type}>()]);
+\tpipe.append(EncodeLEB128Signed(idlHash("{field}")));
+\tpipe.write([getIDLType<{type}>()]);
 `
 
-encoder_encode_item = 
-`encoder.encode<{type}>({varName}.{field}, false);
-`
+encoder_encode_item = "\tencoder.encode<{type}>({varName}.{field}, false);\n"
 
 
 function buildRecordGenerator(recordMap) {

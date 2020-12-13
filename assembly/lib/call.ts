@@ -221,7 +221,7 @@ class Decoder {
 
     decode<T>(): T {
         if (isBoolean<T>()) {
-            return <T>(this.pipe.read(1)[0] == 0);
+            return <T>(this.pipe.read(1)[0] != 0);
         }
         else if (isInteger<T>()) {
             var val:T = changetype<T>(<T>(0));

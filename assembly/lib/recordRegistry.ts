@@ -19,23 +19,24 @@ class RecordRegistery {
     //TODO: There has to be a way to Map<Type...
     //for now I grab the nameof<T> which will
     //collisions with similarly named types
-    hanlders: Map<string, BaseRecordHandler>;
+    hanlders: Map<u32, BaseRecordHandler>;
 
     constructor(){
-        this.hanlders = new Map<string, BaseRecordHandler>();
+        this.hanlders = new Map<u32, BaseRecordHandler>();
     }
 
     registerHandler<T>(decoder: RecordDecoder<T>, encoder: RecordEncoder<T>) : void{
         var handler = new RecordHandler<T>(decoder, encoder);
-        this.hanlders.set(nameof<T>(), handler);
+        this.hanlders.set(idof<T>(), handler);
+        
     }
 
     get<T>(): BaseRecordHandler {
-        return this.hanlders.get(nameof<T>());
+        return this.hanlders.get(idof<T>());
     }
 
     has<T>(): bool {
-        return this.hanlders.has(nameof<T>());
+        return this.hanlders.has(idof<T>());
     }
 
     decode<T>(decoder: Decoder) : T{

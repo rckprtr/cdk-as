@@ -7,6 +7,9 @@ class Profile {
     age: i32;
 }
 
+
+
+
 export {
-    Profile,
+    Profile
 }
