@@ -31,6 +31,7 @@ function DecodeLEB128Unsigned(pipe: PipeBuffer): u64 {
 
     while (more) {
         let b: u8 = pipe.read(1)[0];
+        print("byte read " + b.toString(16));
 
         bytes += 1;
 

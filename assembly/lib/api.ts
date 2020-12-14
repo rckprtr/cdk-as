@@ -1,5 +1,5 @@
 import * as IC from "./api/ic0";
-import { Principal } from "./candid/principal";
+import { Principal } from "./candid/types/principal";
 
 
 function time(): i64 {

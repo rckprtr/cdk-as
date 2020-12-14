@@ -3,9 +3,10 @@ var format = require("string-template");
 
 
 base_template = `
-import { Decoder, Encoder } from "./lib/call";
-import { getIDLType } from "./lib/idl/types";
-import { RecordRegistery } from "./lib/recordRegistry";
+import { Decoder } from "./lib/candid/decode";
+import { Encoder } from "./lib/candid/encode";
+import { getIDLType } from "./lib/candid/idl/types";
+import { RecordRegistery } from "./lib/candid/recordRegistry";
 import { idlHash } from "./lib/utils/hash";
 import { EncodeLEB128Signed } from "./lib/utils/LEB128";
 import { PipeBuffer } from "./lib/utils/pipeBuffer";

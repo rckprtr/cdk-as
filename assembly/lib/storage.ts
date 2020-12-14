@@ -1,8 +1,7 @@
 import { print } from "./api";
-import { Decoder, Encoder } from "./call";
 import * as STABLE from "./api/stable";
-import { printUint8Array } from "./utils/helpers";
-import { PipeBuffer } from "./utils/pipeBuffer";
+import { Decoder } from "./candid/decode";
+import { Encoder } from "./candid/encode";
 
 //TODO: Needs some serious consideration
 //For testing this will be an Array<i64>

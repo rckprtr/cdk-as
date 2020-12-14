@@ -1,6 +1,5 @@
-import * as LEB128 from '../utils/LEB128';
-import { Uint8ArrayFromU8Array } from '../utils/helpers';
-import { Decoder, Encoder } from '../call';
+import { Decoder } from '../candid/decode';
+import { Encoder } from '../candid/encode';
 import { parseHexString } from './helpers';
 
 describe("DFINITY Primitives encode and decoding", () => {

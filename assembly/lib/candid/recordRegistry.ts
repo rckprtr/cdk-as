@@ -1,4 +1,5 @@
-import { Decoder, Encoder } from "./call";
+import { Decoder } from "./decode";
+import { Encoder } from "./encode";
 
 type RecordDecoder<T> = (decoder: Decoder) => T;
 type RecordEncoder<T> = (encoder: Encoder, record: T) => void;

@@ -1,7 +1,5 @@
-import * as LEB128 from '../utils/LEB128';
-import * as API from '../api';
-import { PipeBuffer } from '../utils/pipeBuffer';
-import { printUint8Array } from '../utils/helpers';
+import * as LEB128 from '../../utils/LEB128';
+import { PipeBuffer } from '../../utils/pipeBuffer';
 
 
 //TODO: Map types, setup classes... a lot of things
@@ -44,11 +42,14 @@ class FloatClass extends IDLType {
         const buf = pipe.read(this.bits);
         if (this.bits == 8) {
             var f64Result = Float64Array.wrap(buf.buffer);
+            //@ts-ignore
             return <T>f64Result[0];
         } else if (this.bits == 4) {
             var f32Result = Float32Array.wrap(buf.buffer);
+            //@ts-ignore
             return <T>f32Result[0];
         }
+        //@ts-ignore
         return changetype<T>(<T>(0));
     }
 }
@@ -64,21 +65,25 @@ class FixedIntClass extends IDLType {
         if (this.bits == 64) {
             var pipe = new PipeBuffer();
             var i64Array = new Int64Array(1);
+            //@ts-ignore
             i64Array[0] = <i64>value;
             pipe.writeArrayBuffer(i64Array.buffer);
             return pipe;
         } else {
+            //@ts-ignore
             return LEB128.writeIntLE(<i64>value, this.bits / 8);
         }
     }
     decodeValue<T>(pipe: PipeBuffer): T {
         if (this.bits <= 32) {
+            //@ts-ignore
             return <T>LEB128.readIntLE(pipe, this.bits / 8);
         }
         else {
 
             const buf = pipe.read(this.bits / 8);
             var i64Array = Int64Array.wrap(buf.buffer);
+            //@ts-ignore
             return <T>i64Array[0];
         }
     }
@@ -96,22 +101,26 @@ class FixedNatClass extends IDLType {
         if (this.bits == 64) {
             var pipe = new PipeBuffer();
             var u64Array = new Uint64Array(1);
+            //@ts-ignore
             u64Array[0] = <u64>value;
             pipe.writeArrayBuffer(u64Array.buffer);
             return pipe;
 
         } else {
+            //@ts-ignore
             return LEB128.writeIntLE(<i64>value, this.bits / 8);
         }
     }
     decodeValue<T>(pipe: PipeBuffer): T {
         if (this.bits <= 32) {
             const num = LEB128.readUIntLE(pipe, this.bits / 8);
+            //@ts-ignore
             return <T>num;
         }
         else {
             const buf = pipe.read(this.bits / 8);
             var u64Array = Uint64Array.wrap(buf.buffer);
+            //@ts-ignore
             return <T>u64Array[0];
         }
     }
@@ -169,6 +178,7 @@ function getIDLType<T>(): u8 {
         return 0x7E;
     }
     else if (isInteger<T>()) {
+        //@ts-ignore
         var val: T = changetype<T>(<T>(0));
         return getIntegerIDLValueType(val).encodeType;
     }

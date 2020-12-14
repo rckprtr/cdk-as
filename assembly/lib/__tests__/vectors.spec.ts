@@ -1,7 +1,6 @@
-import * as LEB128 from '../utils/LEB128';
-import { Uint8ArrayFromU8Array } from '../utils/helpers';
-import { Decoder, Encoder } from '../call';
 import { parseHexString } from './helpers';
+import { Decoder } from '../candid/decode';
+import { Encoder } from '../candid/encode';
 
 describe("DFINITY Vectors encode and decoding", () => {
 
