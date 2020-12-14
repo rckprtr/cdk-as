@@ -1,5 +1,5 @@
-import * as IC from "./ic0";
-import { Principal } from "./principal";
+import * as IC from "./api/ic0";
+import { Principal } from "./candid/principal";
 
 
 function time(): i64 {
@@ -50,7 +50,7 @@ export {
     caller,
     canisterId,
     canisterBalance,
-    
+
     trap,
 
     fundsAvailable,

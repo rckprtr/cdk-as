@@ -1,6 +1,6 @@
 import { print } from "./api";
 import { Decoder, Encoder } from "./call";
-import * as STABLE from "./stable";
+import * as STABLE from "./api/stable";
 import { printUint8Array } from "./utils/helpers";
 import { PipeBuffer } from "./utils/pipeBuffer";
 

@@ -1,5 +1,4 @@
 import { Decoder, Encoder } from "./call";
-import { PipeBuffer } from "./utils/pipeBuffer";
 
 type RecordDecoder<T> = (decoder: Decoder) => T;
 type RecordEncoder<T> = (encoder: Encoder, record: T) => void;

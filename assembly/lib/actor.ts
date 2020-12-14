@@ -1,5 +1,5 @@
 import { print } from "./api";
-import { Principal } from "./principal";
+import { Principal } from "./candid/principal";
 import { Storage } from "./storage";
 
 class Actor {

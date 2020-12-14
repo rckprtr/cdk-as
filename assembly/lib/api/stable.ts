@@ -1,7 +1,5 @@
 
-import { print } from './api';
 import * as IC from './ic0';
-import { printUint8Array } from './utils/helpers';
 
 function stable_size(): u32 {
     return IC.stable_size() << 16;

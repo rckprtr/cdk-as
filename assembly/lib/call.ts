@@ -1,9 +1,7 @@
-import * as IC from './ic0';
-import { printUint8Array } from './utils/helpers';
-import * as API from './api';
+import * as IC from './api/ic0';
 import * as LEB128 from './utils/LEB128';
 import { PipeBuffer } from './utils/pipeBuffer';
-import { FixedIntClass, getIntegerIDLValueType, getIDLType, getFloatIDLValueTypes } from './idl/types';
+import { getIntegerIDLValueType, getIDLType, getFloatIDLValueTypes } from './idl/types';
 import { RecordRegistery } from './recordRegistry';
 
 const magicNumber = 'DIDL';
