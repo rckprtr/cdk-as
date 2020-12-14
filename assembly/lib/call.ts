@@ -127,10 +127,13 @@ class Encoder {
         }
         else if (isArray<T>()) {
             //TODO: Need to add a lookup for types, hardcoded to string for now.
+            //@ts-ignore
             this.addTypeTableItem(0x6D, getIDLType<valueof<T>>());
+            //@ts-ignore
             var genericArray = changetype<Array<valueof<T>>>(value);
             this.argBuffer.write([0, <u8>genericArray.length])
             for (let x: i32 = 0; x < genericArray.length; x++) {
+                //@ts-ignore
                 this.encode<valueof<T>>(genericArray[x], false);
             }
         }
@@ -192,6 +195,7 @@ class Decoder {
             const type = <i8>LEB128.DecodeLEB128Signed(this.pipe);
             switch (type) {
                 case -19 /* Vector */: {
+                    
                     const t = LEB128.DecodeLEB128Signed(this.pipe); //string, int, bool ...
                     //Im not doing anything with these yet.
                     break;
@@ -221,9 +225,11 @@ class Decoder {
 
     decode<T>(): T {
         if (isBoolean<T>()) {
+            //@ts-ignore
             return <T>(this.pipe.read(1)[0] != 0);
         }
         else if (isInteger<T>()) {
+            //@ts-ignore
             var val:T = changetype<T>(<T>(0));
             var idlType = getIntegerIDLValueType(val);
             
@@ -232,19 +238,24 @@ class Decoder {
         else if (isString<T>()) {
             const len = <i32>LEB128.DecodeLEB128Unsigned(this.pipe);
             const buf = this.pipe.read(len);
+            //@ts-ignore
             return <T>(String.UTF8.decode(buf.buffer));
         }
         else if(isFloat<T>()){
+            //@ts-ignore
             var val:T = changetype<T>(<T>(0));
             var idlType = getFloatIDLValueTypes(val);
             return idlType.decodeValue<T>(this.pipe);
         }
         else if (isArray<T>()) {
+            //@ts-ignore
             var arrayResult = new Array<valueof<T>>();
             const lens = <i32>LEB128.DecodeLEB128Unsigned(this.pipe);
             for (var i: i32 = 0; i < lens; i++) {
+                //@ts-ignore
                 arrayResult.push(this.decode<valueof<T>>());
             }
+            //@ts-ignore
             return <T>arrayResult;
         }
         //check record registry

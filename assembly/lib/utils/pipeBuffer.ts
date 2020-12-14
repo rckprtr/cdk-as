@@ -48,6 +48,8 @@ class PipeBuffer {
     }
 
     _load(buf: u8[]): Uint8Array{
+
+        //TODO: use store<T>
         var newBuffer = new Uint8Array(buf.length);
         for (let i: i32 = 0; i < buf.length; i++) {
             newBuffer[i] = buf[i]

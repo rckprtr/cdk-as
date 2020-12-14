@@ -12,7 +12,6 @@ function printUint8Array(arr: Uint8Array): void {
         values += String.fromCharCode(arr[i]) + "  ";
     }
     API.print("Packet-> L:" + arr.byteLength.toString())
-    API.print("[" + items.join(",") + "]");
     API.print(data)
     API.print(values);
     API.print("End Packet-> L:" + arr.byteLength.toString())

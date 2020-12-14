@@ -82,6 +82,9 @@ npm run test
 | ✅ | `canister_self_size` |
 | ✅ | `canister_update` |
 | ✅ | `canister_query` |
+| ✅ | `canister_pre_upgrade` |
+| ✅ | `canister_post_upgrade` |
+| ✅ | `canister_query` |
 | ✅ | `debug_print` |
 | ✅ | `msg_arg_data_copy` |
 | ✅ | `msg_arg_data_size` |
@@ -97,10 +100,10 @@ npm run test
 | ✅ | `msg_reply_data_append` |
 | ✅ | `msg_reply` |
 | ✅ | `trap` |
-| :heavy_minus_sign: | `stable_write` |
-| :heavy_minus_sign: | `stable_read` |
-| :heavy_minus_sign: | `stable_size` |
-| :heavy_minus_sign: | `stable_grow` |
+| ✅ | `stable_write` |
+| ✅ | `stable_read` |
+| ✅ | `stable_size` |
+| ✅ | `stable_grow` |
 | ✅ | `time` |
 
 ### DFINITY Primitives
@@ -125,6 +128,7 @@ npm run test
 | :heavy_minus_sign: | `Reserved` | `N/A` |
 | :heavy_minus_sign: | `Empty` | `N/A` |
 
+* For Int/Nat AS currently does not have an arbitrary length integer
 
 ### DFINITY Types
 |  | DFX Types | AS Type |

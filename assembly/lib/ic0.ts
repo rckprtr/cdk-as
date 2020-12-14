@@ -21,3 +21,8 @@ export declare function trap(msg : ArrayBuffer, length: i32) : void;
 export declare function canister_self_size() : u32;
 export declare function canister_self_copy(x : ArrayBuffer, start: i32, size: i32) : void;
 export declare function canister_balance(id : ArrayBuffer, length: i32) : u64;
+
+export declare function stable_size() : u32;
+export declare function stable_grow(pages: i32) : u32;
+export declare function stable_write(offset: i32, data : ArrayBuffer, size: i32) : void;
+export declare function stable_read(dst : ArrayBuffer, start: i32, size: i32) : void;

@@ -41,13 +41,26 @@ initRegistry();
 var actor: COUNTER.{actor_class_name};
 {canister_init}
 {canister_methods}
+
+
+export function canister_pre_upgrade(): void {
+    var currentTime = API.time();
+    API.print("[canister_pre_upgade] called " + currentTime.toString());
+    actor.preUpgrade();
+}
+
+export function canister_post_upgrade(): void {
+    var currentTime = API.time();
+    API.print("[canister_post_upgade] called " + currentTime.toString());
+    actor.postUpgrade();
+}
 `
 
 var model_import_template = `import { {typeNames} } from "./models";`
 
 var canister_init_template = `
 export function canister_init(): void {
-    var text: string = "Hello DFINITY from AssemblyScript";
+    var text: string = "[init] Hello DFINITY from AssemblyScript";
     API.print(text);
     actor = new COUNTER.{actor_class_name}(API.caller(), API.time());
 }
