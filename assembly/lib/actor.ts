@@ -14,12 +14,13 @@ class Actor {
         //TODO: set owner, tokens?, time?
     }
 
-    //overloads Actor preUpgrade
+    //can be overrid
     preUpgrade() : void{
         print("[Counter] Canister pre upgrade called");
         this.storage.save();
     }
 
+     //can be overrid
     postUpgrade() : void{
         print("[Counter] Canister post upgrade called");
         this.storage.reload();
