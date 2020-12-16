@@ -1,3 +1,4 @@
+import { Encoder } from '../candid/encode';
 import { Uint8ArrayFromU8Array } from '../utils/helpers';
 import { parseHexString } from './helpers';
 
@@ -10,6 +11,14 @@ describe("Call encode and decoding", () => {
     expect<Uint8Array>(
       parseHexString(data)
     ).toStrictEqual(dataArray, "Should match the equal Uint8Array")
+  });
+
+  it("Should encode a empty response", () => {
+    var dataArray = parseHexString("4449444c0000")
+    var encode = new Encoder();
+    expect<Uint8Array>(
+      encode.build()
+    ).toStrictEqual(dataArray, "Should match a empty response")
   });
 });
 

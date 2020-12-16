@@ -73,7 +73,7 @@ npm run test
 
 |  | Command |
 | --- | --- |
-| ✅ | `call_data_append` |
+| :heavy_minus_sign: | `call_data_append` |
 | :heavy_minus_sign: | `call_funds_add` |
 | :heavy_minus_sign: | `call_new` |
 | :heavy_minus_sign: | `call_perform` |
@@ -93,10 +93,10 @@ npm run test
 | ✅ | `msg_funds_available` |
 | :heavy_minus_sign: | `msg_funds_refunded` |
 | :heavy_minus_sign: | `msg_funds_accept` |
-| :heavy_minus_sign: | `msg_reject_code` |
-| :heavy_minus_sign: | `msg_reject_msg_size` |
-| :heavy_minus_sign: | `msg_reject_msg_copy` |
-| :heavy_minus_sign: | `msg_reject` |
+| ✅ | `msg_reject_code` |
+| ✅ | `msg_reject_msg_size` |
+| ✅ | `msg_reject_msg_copy` |
+| ✅ | `msg_reject` |
 | ✅ | `msg_reply_data_append` |
 | ✅ | `msg_reply` |
 | ✅ | `trap` |
@@ -126,7 +126,7 @@ npm run test
 | ✅ | `Float32` | `f64` |
 | ✅ | `Text` | `string` |
 | :heavy_minus_sign: | `Reserved` | `N/A` |
-| :heavy_minus_sign: | `Empty` | `N/A` |
+| ✅ | `Empty` | `N/A` |
 
 * For Int/Nat AS currently does not have an arbitrary length integer
 
