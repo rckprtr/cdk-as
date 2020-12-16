@@ -41,6 +41,21 @@ describe("DFINITY Vectors encode and decoding", () => {
   });
 
   //vector u8
+  it("Should decode and encode a vector u8", () => {
+    //didc encode '(vec {1;2;3;4;5;6;7;8;9})' -t '(vec nat8)'
+    var dataArray = parseHexString("4449444c016d7b010009010203040506070809")
+    var decoder = new Decoder(dataArray);
+    var inputData = <Array<u8>>[1,2,3,4,5,6,7,8,9];
+    expect<Array<u8>>(
+      decoder.decode<Array<u8>>()
+    ).toStrictEqual(inputData, "Should decode the Array<u8> to [1,2,3,4,5,6,7,8,9]")
+
+    var encoder = new Encoder();
+    encoder.write<Array<u8>>(inputData);
+    expect<Uint8Array>(
+      encoder.build()
+    ).toStrictEqual(dataArray, "Should encode the Array<u8> to the same Uint8Array")
+  });
 
   //vector u32
 

@@ -1,6 +1,7 @@
 import { getFloatIDLValueTypes, getIDLType, getIntegerIDLValueType } from "./idl/types";
 import { PipeBuffer } from "../utils/pipeBuffer";
 import { RecordRegistery } from "./recordRegistry";
+import { EncodeLEB128Unsigned } from "../utils/LEB128";
 
 const magicNumberBytes: u8[] = [0x44, 0x49, 0x44, 0x4c];
 
@@ -82,7 +83,8 @@ class Encoder {
             this.addTypeTableItem(0x6D, getIDLType<valueof<T>>());
             //@ts-ignore
             var genericArray = changetype<Array<valueof<T>>>(value);
-            this.argBuffer.write([0, <u8>genericArray.length])
+            this.argBuffer.write([0]);
+            this.argBuffer.append(EncodeLEB128Unsigned(genericArray.length));
             for (let x: i32 = 0; x < genericArray.length; x++) {
                 //@ts-ignore
                 this.encode<valueof<T>>(genericArray[x], false);

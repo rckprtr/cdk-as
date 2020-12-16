@@ -14,6 +14,7 @@ describe("Call encode and decoding", () => {
   });
 
   it("Should encode a empty response", () => {
+    //didc encode '()'
     var dataArray = parseHexString("4449444c0000")
     var encode = new Encoder();
     expect<Uint8Array>(
