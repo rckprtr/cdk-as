@@ -2,6 +2,7 @@
 
 var format = require("string-template");
 var IDL = require("./idlTypes");
+var AS = require("./asTypes");
 
 function buildRecordMap(jsonData) {
 
@@ -22,12 +23,13 @@ function buildRecordMap(jsonData) {
             }
             newRecord.fields = []
             record.fields.forEach(field => {
+              
                 newRecord.fields.push(
                     {
                         name: field.name,
                         hash: idlHash(field.name),
-                        didType: IDL.toIDLType(field.type.typeName),
-                        asType: field.type.typeName
+                        didType: IDL.buildDIDFieldType(field.type),
+                        asType: AS.buildASFieldType(field.type)
                     }
                 )
             });
@@ -65,25 +67,32 @@ function buildRecordMap(jsonData) {
     
     function buildRelationships(record, records, history) {
         record.fields.forEach(field => {
-            if (IDL.toIDLType(field.asType) == field.asType) {
-                var results = records.find(recs => recs.name == field.asType);
+            if (IDL.toIDLType(field.asType) == field.asType && !field.didType.includes('vec')) {
+                var results = records.find(recs => {
+                    return recs.name.includes(field.asType)
+                });
+
                 if(results){
                     record.did = record.did.replace(field.asType, results.did)
-                    console.log(record);
+                }
+            } else if(field.didType.includes('vec')) {
+                var searchToken = field.didType.replace(/vec/g,'').trim();
+                var results = records.find(recs => {
+                    return recs.name.includes(searchToken)
+                });
+                if(results){
+                    record.did = record.did.replace(searchToken, results.did)
                 }
             }
         });
         return record;
     }
-
     var recordResults = mapRecords(records);
     mapRelationships(recordResults);
     return recordResults;
 }
 
-
-
-//I need this to sort??
+//DFINITY sorts inputs by this hash for records
 function idlHash(s) {
     const utf8encoder = new TextEncoder();
     const array = utf8encoder.encode(s);

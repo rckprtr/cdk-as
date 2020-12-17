@@ -5,6 +5,7 @@ var format = require("string-template");
 var parseRecords = require("./parse_records");
 var recordGen = require("./create_record_gen");
 var IDL = require("./idlTypes");
+var AS = require("./asTypes");
 
 var inputArgs = process.argv.slice(2);
 
@@ -104,7 +105,7 @@ actorClass.methods.forEach(m => {
         let inputArgs = [];
         var inputArgTypes = [];
         m.arguments.forEach(arg => {
-            var inputType = buildAsType(arg.type);
+            var inputType = AS.buildASFieldType(arg.type);
 
             recieve += format(`
     let {name} = decoder.decode<{type}>();`, {
@@ -133,7 +134,7 @@ actorClass.methods.forEach(m => {
             response = format(`let encoder = new Encoder();
     encoder.write<{type}>(response);
     CALL.reply(encoder);`, {
-                type: buildAsType(m.returnType)
+                type: AS.buildASFieldType(m.returnType)
             })
         }
 
@@ -146,7 +147,7 @@ actorClass.methods.forEach(m => {
         });
 
         //Build DID
-        var returnType = buildAsType(m.returnType);
+        var returnType = AS.buildASFieldType(m.returnType);
 
         did_methods_template += format(
             `\t{func_name}: ({input_types}) -> ({return_type}){call_type};\n`, {
@@ -178,49 +179,19 @@ function getIDLCallType(funcType, returnType){
     return '';
 }
 
-function buildAsType(returnType) {
-
-    //object as list Object[]
-    if (returnType.typeKind == 1) {
-        return format('{type}[]', {
-            type: returnType.base.typeName
-        });
-    }
-
-    //object with types Object<T>
-    if (returnType.typeArguments.length > 0) {
-        return format('{type}<{types}>', {
-            type: returnType.typeName,
-            types: returnType.typeArguments.map(x => x.typeName).join(',')
-        });
-    }
-    return returnType.typeName;
-}
-
 function buildDIDType(types) {
-
-    //object as list Object[]
-    if (types.typeKind == 1) {
-        return format('vec {type}', {
-            type: IDL.toIDLType(types.base.typeName)
-        });
-    }
-
-    //object with types Object<T>
-    if (types.typeArguments.length > 0) {
-        return format('vec {type}', {
-            type: types.typeArguments.map(x => IDL.toIDLType((x.typeName))).join(';')
-        });
-    }
-    var record = recordMapContains(recordMap, types.typeName);
+    
+    var result = IDL.buildDIDFieldType(types);
+    //remove vec - a hack
+    var vecLess = result.replace(/vec/g,'').trim();
+    var record = recordMapContains(recordMap, vecLess);
     if(record){
-        return record.did;
+        return result.replace(vecLess, record.did);
     }
 
-    return IDL.toIDLType(types.typeName);
+    return result;
 }
 
-//TODO: suport Object<Object<Object<T>>>
 function getFunctionType(text) {
     if (text.indexOf("@query") != -1) {
         return "canister_query";
@@ -229,7 +200,6 @@ function getFunctionType(text) {
     }
     return null;
 }
-
 
 canister_init_template = format(canister_init_template, {
     actor_class_name: actorClass.name

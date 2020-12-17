@@ -5,10 +5,10 @@
   "scripts": {
     "test": "asp --verbose",
     "test:ci": "asp --summary",
-    "build": "npm run build:gen && npm run build:as && node tools/add_spac_in_wat.js build/ashello.wat",
+    "build": "npm run build:gen && npm run build:as && node tools/update_wat.js build/ashello.wat",
     "build:wat": "wat2wasm build/ashello.wat -o build/ashello.wasm && cp build/ashello.wasm .dfx/local/canisters/ashello/ && dfx canister install --all --mode reinstall",
     "build:as": "asc assembly/index.ts -b build/ashello.wasm -t build/ashello.wat --runtime none --target release --use abort=",
-    "build:gen": "node tools/parse_actors.js assembly/counter.ts assembly/models.ts",
+    "build:gen": "node tools/gen/parse_actors.js assembly/counter.ts assembly/models.ts",
     "rebuild": "npm run build && npm run build:wat",
     "dfx_create": "dfx canister create ashello && mkdir -p .dfx/local/canisters/ashello/",
     "dfx_run": "npm run build && npm run build:wat && npm run dfx_test",

@@ -134,8 +134,8 @@ npm run test
 |  | DFX Types | AS Type |
 | --- | --- | --- |
 | :heavy_minus_sign: | `Opt` | `TBD` |
-| ✅ | `Vec` | `Array (1D)` |
-| ✅ | `Record` | `Models (No Relationships Yet)` |
+| ✅ | `Vec` | `Array<Object> or Object[] (Supports Multi Dimensional) ` |
+| ✅ | `Record` | `Models (No Recursive Relationships)` |
 | :heavy_minus_sign: | `Variant` | `TBD` |
 
 

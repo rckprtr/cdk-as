@@ -70,8 +70,6 @@ describe("DFINITY Vectors encode and decoding", () => {
   //vector float32
 
   //vector float64
-
-
 });
 
 

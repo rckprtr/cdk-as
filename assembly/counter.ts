@@ -1,11 +1,29 @@
 import { Actor, query, update } from "./lib/actor";
 import * as CALL from "./lib/api/call"
 import * as API from "./lib/api"
-import { Profile } from "./models";
+import { UserList, Profile } from "./models";
 
 class CounterActor extends Actor {
 
     public counter: i64 = 0;
+
+    //@ts-ignore
+    @update()
+    userListTesr(value: UserList): void {
+        
+    }
+
+    @update()
+    somethingnoidea(value: Array<Array<Profile[][][]>>): Array<Array<Profile[][][]>> {
+        return value;
+    }
+
+    //@ts-ignore
+    @update()
+    HELLOWORLD(value: Array<UserList>): void {
+        
+    }
+
 
     //@ts-ignore
     @update()
