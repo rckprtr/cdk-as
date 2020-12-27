@@ -18,11 +18,11 @@ describe("DFINITY Vectors encode and decoding", () => {
       decoder.decode<Array<string>>()
     ).toStrictEqual(inputData, "Should decode the Array<string> to ['D','F','X']")
 
-    // var encoder = new Encoder([IDL.Vec(IDL.getType<string>())]);
-    // encoder.write<Array<string>>(inputData);
-    // expect<string>(
-    //   Uint8ArrayToString(encoder.build())
-    // ).toBe("4449444c016d71010003014401460158", "Should encode the Array<string> to the same Uint8Array")
+    var encoder = new Encoder([IDL.Vec(IDL.getType<string>())]);
+    encoder.write<Array<string>>(inputData);
+    expect<string>(
+      Uint8ArrayToString(encoder.build()).toLowerCase()
+    ).toBe("4449444c016d71010003014401460158", "Should encode the Array<string> to the same Uint8Array")
   });
 
   //vector bool
@@ -35,11 +35,11 @@ describe("DFINITY Vectors encode and decoding", () => {
       decoder.decode<Array<boolean>>()
     ).toStrictEqual(inputData, "Should decode the Array<boolean> to [true,false,true,false,true]")
 
-    // var encoder = new Encoder([IDL.Vec(IDL.getType<bool>())]);
-    // encoder.write<Array<boolean>>(inputData);
-    // expect<Uint8Array>(
-    //   encoder.build()
-    // ).toStrictEqual(dataArray, "Should encode the Array<boolean> to the same Uint8Array")
+    var encoder = new Encoder([IDL.Vec(IDL.getType<bool>())]);
+    encoder.write<Array<boolean>>(inputData);
+    expect<Uint8Array>(
+      encoder.build()
+    ).toStrictEqual(dataArray, "Should encode the Array<boolean> to the same Uint8Array")
   });
 
   //vector u8
@@ -52,11 +52,11 @@ describe("DFINITY Vectors encode and decoding", () => {
       decoder.decode<Array<u8>>()
     ).toStrictEqual(inputData, "Should decode the Array<u8> to [1,2,3,4,5,6,7,8,9]")
 
-    // var encoder = new Encoder([new VecClass(getType<u8>())]);
-    // encoder.write<Array<u8>>(inputData);
-    // expect<Uint8Array>(
-    //   encoder.build()
-    // ).toStrictEqual(dataArray, "Should encode the Array<u8> to the same Uint8Array")
+    var encoder = new Encoder([IDL.Vec(IDL.getType<u8>())]);
+    encoder.write<Array<u8>>(inputData);
+    expect<Uint8Array>(
+      encoder.build()
+    ).toStrictEqual(dataArray, "Should encode the Array<u8> to the same Uint8Array")
   });
 
   //vector u32
