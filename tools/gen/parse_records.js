@@ -3,6 +3,7 @@
 var format = require("string-template");
 var IDL = require("./idlTypes");
 var AS = require("./asTypes");
+var fs = require('fs');
 
 function buildRecordMap(jsonData) {
 
@@ -23,18 +24,21 @@ function buildRecordMap(jsonData) {
             }
             newRecord.fields = []
             record.fields.forEach(field => {
-              
+
                 newRecord.fields.push(
                     {
                         name: field.name,
                         hash: idlHash(field.name),
                         didType: IDL.buildDIDFieldType(field.type),
-                        asType: AS.buildASFieldType(field.type)
+                        asType: AS.buildASFieldType(field.type),
+                        asBaseType: getBaseName(field),
+                        relationships: []
                     }
                 )
             });
-            newRecord.fields = newRecord.fields.sort((a, b) => (a.hash > b.hash) ? 1 : -1)
-            newRecord.did = buildDIDItem(newRecord);
+            newRecord.children = [];
+            newRecord.fields = newRecord.fields.sort((a, b) => (a.hash < b.hash) ? 1 : -1)
+            //newRecord.did = buildDIDItem(newRecord);
             recordMap.push(newRecord);
         });
         return recordMap;
@@ -45,51 +49,113 @@ function buildRecordMap(jsonData) {
         var did_template = `record {inputs}`
         var did_input_template = `{name}: {type}; `
         var results = "";
+        var isArray = false;
+
         record.fields.forEach(field => {
-            results += format(did_input_template, {
-                name: field.name,
-                type: field.didType
-            })
+            var inChildren = record.children.find(rec => rec.name == field.asBaseType);
+            if (inChildren) {
+                var decorate = '';
+
+                if( field.didType.split(' ')[0] == 'vec'){
+                    decorate = 'vec ';
+                }
+
+                if( field.didType.split(' ')[0] == 'opt'){
+                    decorate = 'opt ';
+                }
+                
+                results += format(did_input_template, {
+                    name: field.name,
+                    type: decorate + buildDIDItem(inChildren)
+                })
+            } else {
+                results += format(did_input_template, {
+                    name: field.name,
+                    type: field.didType
+                })
+            }
         });
-        var results =results.trim();
+        var results = results.trim();
+
         return format(did_template, {
             inputs: `{${results}}`
         })
     }
 
-    //something recursive
     function mapRelationships(records) {
-        var history = [];
         records.forEach(record => {
-            record = buildRelationships(record, records, history);
+            getChildren(record, records, [record.name]);
+            getRelationships(record, records, [])
+        });
+
+        records.forEach(record => {
+            record.did = buildDIDItem(record);
         });
     }
-    
-    function buildRelationships(record, records, history) {
-        record.fields.forEach(field => {
-            if (IDL.toIDLType(field.asType) == field.asType && !field.didType.includes('vec')) {
-                var results = records.find(recs => {
-                    return recs.name.includes(field.asType)
-                });
 
-                if(results){
-                    record.did = record.did.replace(field.asType, results.did)
+    function getRelationships(record, records, history) {
+        record.fields.forEach(field => {
+            var result = records.find(rec => {
+                if (!(rec.name in history)) {
+                    return field.asBaseType == rec.name;
                 }
-            } else if(field.didType.includes('vec')) {
-                var searchToken = field.didType.replace(/vec/g,'').trim();
-                var results = records.find(recs => {
-                    return recs.name.includes(searchToken)
-                });
-                if(results){
-                    record.did = record.did.replace(searchToken, results.did)
+            });
+            if (result) {
+                var alreadyInChildren = field.relationships.find(rec => rec.name == result.name);
+                if (!alreadyInChildren) {
+                    history.push(result.name);
+                    getRelationships(result, records, history);
+
+                    var newItem = cloneObject(result);
+                    field.isArray = isVector(field.didType);
+                    field.relationships.push(newItem);
                 }
             }
         });
-        return record;
     }
+
+    function getChildren(record, records, history) {
+        record.fields.forEach(field => {
+            var result = records.find(rec => {
+                if (!(rec.name in history)) {
+                    return field.asBaseType == rec.name;
+                }
+            });
+            if (result) {
+                var alreadyInChildren = record.children.find(rec => rec.name == result.name);
+                if (!alreadyInChildren) {
+                    history.push(result.name);
+                    getChildren(result, records, history);
+                    record.children.push(result);
+                }
+            }
+        });
+    }
+
     var recordResults = mapRecords(records);
     mapRelationships(recordResults);
+
+    // fs.writeFile('records.json', JSON.stringify(recordResults, null, "\t"), function (err) {
+    //     if (err) return console.log(err);
+    // });
+    
+    
     return recordResults;
+}
+
+function cloneObject(object){
+    return JSON.parse(JSON.stringify(object));
+}
+
+function isVector(didType){
+    return didType.split(' ')[0] == 'vec';
+}
+
+function getBaseName(field) {
+    if (field.type.typeArguments.length > 0) {
+        return field.type.typeArguments[0].typeName;
+    }
+    return field.type.typeName;
 }
 
 //DFINITY sorts inputs by this hash for records

@@ -1,8 +1,10 @@
 import { Decoder } from "./decode";
 import { Encoder } from "./encode";
+import { RecordClass } from "./idl/types";
 
 type RecordDecoder<T> = (decoder: Decoder) => T;
 type RecordEncoder<T> = (encoder: Encoder, record: T) => void;
+type TypeTableFunc = () => RecordClass;
 
 class RecordRegistery {
 
@@ -25,8 +27,8 @@ class RecordRegistery {
         this.hanlders = new Map<u32, BaseRecordHandler>();
     }
 
-    registerHandler<T>(decoder: RecordDecoder<T>, encoder: RecordEncoder<T>) : void{
-        var handler = new RecordHandler<T>(decoder, encoder);
+    registerHandler<T>(typeTable: TypeTableFunc, decoder: RecordDecoder<T>, encoder: RecordEncoder<T>) : void{
+        var handler = new RecordHandler<T>(typeTable, decoder, encoder);
         this.hanlders.set(idof<T>(), handler);
         
     }
@@ -48,8 +50,15 @@ class RecordRegistery {
         var baseHandler = this.get<T>();
         baseHandler.encode<T>(encoder, val);
     }
+
+    getRecordClass<T>() : RecordClass {
+        var baseHandler = this.get<T>();
+        return baseHandler.getRecordClass();
+    }
 }
 
+//This should be an interface, but not sure why it wont
+//compile in AS
 class BaseRecordHandler {
 
     encode<V>(encoder: Encoder, record: V) : void {
@@ -60,14 +69,20 @@ class BaseRecordHandler {
         throw new Error("Not Implemented");
     }
 
+    getRecordClass() : RecordClass {
+        throw new Error("Not Implemented");
+    }
+
 }
 class RecordHandler<T> extends BaseRecordHandler {
 
     encoder: RecordEncoder<T>;
     decoder: RecordDecoder<T>;
+    typeTable: TypeTableFunc;
 
-    constructor(decoder: RecordDecoder<T>, encoder: RecordEncoder<T>){
+    constructor(typeTable: TypeTableFunc, decoder: RecordDecoder<T>, encoder: RecordEncoder<T>){
         super();
+        this.typeTable = typeTable;
         this.encoder = encoder;
         this.decoder = decoder;
     }
@@ -78,6 +93,10 @@ class RecordHandler<T> extends BaseRecordHandler {
 
     decode<V>(decoder: Decoder) : V {
         return changetype<V>(this.decoder(decoder));
+    }
+
+    getRecordClass() : RecordClass {
+        return this.typeTable();
     }
 }
 

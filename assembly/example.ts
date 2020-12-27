@@ -1,29 +1,17 @@
 import { Actor, query, update } from "./lib/actor";
-import * as CALL from "./lib/api/call"
 import * as API from "./lib/api"
-import { UserList, Profile } from "./models";
+import { Bar, Foo, User } from "./models";
+import { Principal } from "./lib/candid/types/principal";
+import { newUUID } from "./lib/utils/uuid";
+import { getType } from "./lib/candid/idl/types";
 
-class CounterActor extends Actor {
+class ExampleActor extends Actor {
+
+    //==============
+    //Counter Examples
+    //==============
 
     public counter: i64 = 0;
-
-    //@ts-ignore
-    @update()
-    userListTesr(value: UserList): void {
-        
-    }
-
-    @update()
-    somethingnoidea(value: Array<Array<Profile[][][]>>): Array<Array<Profile[][][]>> {
-        return value;
-    }
-
-    //@ts-ignore
-    @update()
-    HELLOWORLD(value: Array<UserList>): void {
-        
-    }
-
 
     //@ts-ignore
     @update()
@@ -50,23 +38,31 @@ class CounterActor extends Actor {
         return this.counter;
     }
 
+    //==============
+    //Echo Examples
+    //==============
+
     //@ts-ignore
     @query()
     echo(value: string): string {
         return value;
     }
 
+    //==============
+    //Primitives Example
+    //==============
+
     //@ts-ignore
     @query()
     boolTest(value: bool): bool {
-        
+
         return value;
     }
 
     //@ts-ignore
     @query()
     stringArray(value: Array<string>): Array<string> {
-        for(var i:i32 = 0;i<value.length;i++){
+        for (var i: i32 = 0; i < value.length; i++) {
             API.print("String Array value: " + value[i]);
         }
         return value;
@@ -75,7 +71,7 @@ class CounterActor extends Actor {
     //@ts-ignore
     @query()
     intArray(value: Array<i64>): Array<i64> {
-        for(var i:i32 = 0;i<value.length;i++){
+        for (var i: i32 = 0; i < value.length; i++) {
             API.print("Int Array value: " + value[i].toString());
         }
         return value;
@@ -84,7 +80,7 @@ class CounterActor extends Actor {
     //@ts-ignore
     @query()
     uintArray(value: Array<u64>): Array<u64> {
-        for(var i:i32 = 0;i<value.length;i++){
+        for (var i: i32 = 0; i < value.length; i++) {
             API.print("Array value: " + value[i].toString());
         }
         return value;
@@ -93,7 +89,7 @@ class CounterActor extends Actor {
     //@ts-ignore
     @query()
     stringList(value: string[]): string[] {
-        for(var i:i32 = 0;i<value.length;i++){
+        for (var i: i32 = 0; i < value.length; i++) {
             API.print("Array value: " + value[i]);
         }
         return value;
@@ -159,6 +155,10 @@ class CounterActor extends Actor {
         return value;
     }
 
+    //==============
+    //API Examples
+    //==============
+
     //@ts-ignore
     @update()
     trapTest(): void {
@@ -179,23 +179,98 @@ class CounterActor extends Actor {
         return API.canisterBalance(API.canisterId());
     }
 
+    //==============
+    //Record Examples
+    //==============
+    users: Array<User>;
+
+    constructor(owner: Principal, time: i64) {
+        super(owner, time)
+        this.users = new Array<User>();
+    }
+
     //@ts-ignore
     @query()
-    getProfile(profile: Profile): Profile {
-        API.print(profile.name + " " + profile.email + " " + profile.age.toString());
-        return profile;
+    getUser(username: string): User {
+        var result: User | null = null;
+        for (let x = 0; x < this.users.length; x++) {
+            if(this.users[x].username == username){
+                result = this.users[x];
+            }
+        }
+        if(result == null){
+            return new User();
+        } else {
+            return result;
+        }
     }
 
     //@ts-ignore
     @update()
+    updateUser(user: User): void {
+        var result = this.getUser(user.username);
+        if (result) {
+        
+        }
+    }
+    //@ts-ignore
+    @query()
+    listUsers(): Array<User> {
+        return this.users;
+    }
+
+    //@ts-ignore
+    @update()
+    addUser(user: User): User {
+        var result = this.getUser(user.username);
+        if (result.username == "") {
+            API.print("adding user: " + user.username)
+            this.users.push(user);
+            return user;
+        }
+        return user;
+    }
+
+    //@ts-ignore
+    @update()
+    removeUser(name: string): void {
+        var result = this.getUser(name);
+        if (result) {
+            this.users.splice(this.users.indexOf(result), 1);
+        }
+    }
+
+    //==============
+    //Stable Examples
+    //==============
+
+    //@ts-ignore
+    @update()
     testStable(val: i64): void {
-       API.print("Non Stable value counter: " + this.counter.toString())
-       this.storage.printValues();
-       this.storage.add(val);
+        API.print("Non Stable value counter: " + this.counter.toString())
+        //this.storage.printValues();
+        //this.storage.add(val);
+    }
+
+
+    //==============
+    //Util Examples
+    //==============
+
+
+    //@ts-ignore
+    @update()
+    testUUID(): Array<string> {
+        var results = new Array<string>();
+        for(var i:i32 = 0;i<10;i++){
+            results.push(newUUID());
+        }
+        return results;
     }
 }
 
 
+
 export {
-    CounterActor
+    ExampleActor
 }

@@ -26,7 +26,7 @@ class Storage {
 
     //this will write over the buffer
     save(): void {
-        var encoder = new Encoder();
+        var encoder = new Encoder([]);
         encoder.write<Array<i64>>(this.values);
         var data = encoder.build();
         STABLE.stable_write(0, data); 

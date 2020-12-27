@@ -135,7 +135,7 @@ npm run test
 | --- | --- | --- |
 | :heavy_minus_sign: | `Opt` | `TBD` |
 | ✅ | `Vec` | `Array<Object> or Object[] (Supports Multi Dimensional) ` |
-| ✅ | `Record` | `Models (No Recursive Relationships)` |
+| ✅ | `Record` | `Models (No Cyclical Relationships)` |
 | :heavy_minus_sign: | `Variant` | `TBD` |
 
 

@@ -33,14 +33,15 @@ var template = `
 // *************************************
 import * as CALL from "./lib/api/call"
 import * as API from "./lib/api";
-import * as COUNTER from "./counter";
+import { getType } from "./lib/candid/idl/types";
+import { {actor_class_name} } from "./example";
 import { Encoder } from "./lib/candid/encode";
 {model_imports}
 import { initRegistry } from "./index.records";
 
 initRegistry();
 
-var actor: COUNTER.{actor_class_name};
+var actor: {actor_class_name};
 {canister_init}
 {canister_methods}
 
@@ -56,6 +57,9 @@ export function canister_post_upgrade(): void {
     API.print("[canister_post_upgade] called " + currentTime.toString());
     actor.postUpgrade();
 }
+
+function dfxSeed(): f64 { return <f64>API.time(); }
+
 `
 
 var model_import_template = `import { {typeNames} } from "./models";`
@@ -64,7 +68,7 @@ var canister_init_template = `
 export function canister_init(): void {
     var text: string = "[init] Hello DFINITY from AssemblyScript";
     API.print(text);
-    actor = new COUNTER.{actor_class_name}(API.caller(), API.time());
+    actor = new {actor_class_name}(API.caller(), API.time());
 }
 `
 
@@ -117,7 +121,7 @@ actorClass.methods.forEach(m => {
         })
 
         let actor_call = "";
-        let response = "CALL.reply(new Encoder());"
+        let response = "CALL.reply(new Encoder([]));"
 
         //Compute return types
         if (m.returnType.typeName == 'void') {
@@ -131,7 +135,7 @@ actorClass.methods.forEach(m => {
                 params: inputArgs.join(",")
             })
 
-            response = format(`let encoder = new Encoder();
+            response = format(`let encoder = new Encoder([getType<{type}>()]);
     encoder.write<{type}>(response);
     CALL.reply(encoder);`, {
                 type: AS.buildASFieldType(m.returnType)
@@ -183,7 +187,7 @@ function buildDIDType(types) {
     
     var result = IDL.buildDIDFieldType(types);
     //remove vec - a hack
-    var vecLess = result.replace(/vec/g,'').trim();
+    var vecLess = result.replace(/vec/g,'').replace(/opt/g,'').trim();
     var record = recordMapContains(recordMap, vecLess);
     if(record){
         return result.replace(vecLess, record.did);

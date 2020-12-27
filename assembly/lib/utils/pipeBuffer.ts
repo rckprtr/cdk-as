@@ -1,5 +1,7 @@
 // based off https://gitlab.com/mjbecze/buffer-pipe
 
+import { Uint8ArrayToString } from "./helpers";
+
 class PipeBuffer {
 
     public buffer: Uint8Array;
@@ -43,8 +45,13 @@ class PipeBuffer {
         this.buffer = newBuffer;
     }
 
-    append(pipe: PipeBuffer) : void {
+    append(pipe: PipeBuffer) : PipeBuffer {
         this.writeUint8Array(pipe.buffer);
+        return this;
+    }
+
+    toString(): string {
+        return Uint8ArrayToString(this.buffer).toLowerCase();
     }
 
     _load(buf: u8[]): Uint8Array{

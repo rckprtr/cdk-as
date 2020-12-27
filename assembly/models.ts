@@ -5,17 +5,11 @@ import { record } from "./lib/actor";
 class Profile {
     name: string;
     email: string;
-    age: i32;
-    address: Address[];
-}
 
-
-//@ts-ignore
-@record()
-class Address {
-    street: string;
-    city: string;
-    state: string;
+    constructor(){
+        this.name = "";
+        this.email = "";
+    }
 }
 
 
@@ -23,22 +17,42 @@ class Address {
 @record()
 class User {
     username: string;
-    created: u64;
-    profile: Array<Profile>;
+    profile: Profile;
+    constructor(){
+        this.profile = new Profile();
+        this.username = "";
+    }
 }
-
-
 
 //@ts-ignore
 @record()
-class UserList {
-    hugeList: Array<Profile[]>;
+class Foo {
+    foo_str_1: string;
+    foo_str_2: string;
+    bar: Array<Bar>;
+    constructor(){
+        this.foo_str_1 = "";
+        this.bar = new Array<Bar>();
+        this.foo_str_2 = "";
+    }
+}
+
+//@ts-ignore
+@record()
+class Bar {
+    bar_str_1: string;
+    bar_str_2: string;
+    constructor(){
+        this.bar_str_1 = "";
+        this.bar_str_2 = "";
+    }
 }
 
 
+
 export {
-    UserList,
     User,
     Profile,
-    Address
+    Foo,
+    Bar
 }

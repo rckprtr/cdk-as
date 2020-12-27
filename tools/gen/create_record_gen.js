@@ -5,11 +5,8 @@ var format = require("string-template");
 base_template = `
 import { Decoder } from "./lib/candid/decode";
 import { Encoder } from "./lib/candid/encode";
-import { getIDLType } from "./lib/candid/idl/types";
+import { getType, RecordClass, TextClass, Type } from "./lib/candid/idl/types";
 import { RecordRegistery } from "./lib/candid/recordRegistry";
-import { idlHash } from "./lib/utils/hash";
-import { EncodeLEB128Signed } from "./lib/utils/LEB128";
-import { PipeBuffer } from "./lib/utils/pipeBuffer";
 {model_imports}
 
 export function initRegistry() : RecordRegistery {
@@ -25,11 +22,26 @@ export function initRegistry() : RecordRegistery {
 
 model_import_template = `import { {typeNames} } from "./models";`
 
-register_template = "\tregistry.registerHandler<{typeName}>({typeName}Decode, {typeName}Encode);\n"
+register_template = "\tregistry.registerHandler<{typeName}>({typeName}Record,{typeName}Decode, {typeName}Encode);\n"
+
+
+typetable_template = `
+function {typeName}Record(): RecordClass {
+    var record = new RecordClass()
+{writeItems}
+    return record;
+}
+`
+encoder_write_item = '\t\t.add("{field}", getType<{type}>())\n'
+
+encoder_write_relationship_item = '\t\t.add("{field}", {typeName}Record())\n'
+
+encoder_typetableitem_template = `
+\ttypeTableItems = typeTableItems.concat({typeName}TypeTable());`
 
 decoder_template = `
 function {typeName}Decode(decoder: Decoder): {typeName}{
-    var {varName} = changetype<{typeName}>(0);
+    var {varName} = new {typeName}();
 {properties}
     return {varName};
 }
@@ -40,22 +52,13 @@ decoder_prop_template = "\t{varName}.{prop} = decoder.decode<{type}>();\n"
 
 encoder_template = `
 function {typeName}Encode(encoder: Encoder, {varName}: {typeName}): void {
-    var pipe = new PipeBuffer();
-    pipe.write([0x6C]); //record type
-    pipe.write([{fieldLength}]); //amount of items
-
-{writeItems}
-
-    encoder.addTypeTableItemRecord(pipe);
 {encodeItems}
 }`
 
-encoder_write_item = `
-\tpipe.append(EncodeLEB128Signed(idlHash("{field}")));
-\tpipe.write([getIDLType<{type}>()]);
-`
 
-encoder_encode_item = "\tencoder.encode<{type}>({varName}.{field}, false);\n"
+
+
+encoder_encode_item = "\tencoder.encode<{type}>({varName}.{field});\n"
 
 
 function buildRecordGenerator(recordMap) {
@@ -64,7 +67,10 @@ function buildRecordGenerator(recordMap) {
 
     var encoderDecoders = "";
 
+
     recordMap.forEach(record => {
+
+        record.fields = record.fields.reverse();
 
         registry += format(register_template, {
             typeName: record.name
@@ -81,7 +87,7 @@ function buildRecordGenerator(recordMap) {
                 })
         })
 
-        var decoderItem = format(decoder_template,{
+        var decoderItem = format(decoder_template, {
             typeName: record.name,
             varName: record.name.toLowerCase(),
             properties: props
@@ -91,29 +97,51 @@ function buildRecordGenerator(recordMap) {
         //encoder
         var writeItems = "";
         var encodeItems = "";
+        var writeTypeRelationship = "";
         record.fields.forEach(field => {
+
             writeItems += format(encoder_write_item,
                 {
                     field: field.name,
                     type: field.asType
-                })
-            
-            encodeItems += format(encoder_encode_item,{
+                });
+
+            encodeItems += format(encoder_encode_item, {
                 type: field.asType,
                 varName: record.name.toLowerCase(),
                 field: field.name,
-            })
+            });
+
         })
-        
-        var encoderItem = format(encoder_template,{
+
+        // var children = "";
+        // record.children.forEach(child => {
+
+        //     if(isChildArray(child, record)){
+        //         children += `\n\ttypeTableItems.push(new TypeTableItem(0x6D));\n`
+        //     }
+
+        //     children += format(encoder_typetableitem_template,{
+        //         typeName: child.name
+        //     })
+        // });
+
+
+        var typeTableItem = format(typetable_template, {
+            typeName: record.name,
+            writeItems: writeItems,
+            children: writeTypeRelationship
+        });
+
+
+        var encoderItem = format(encoder_template, {
             typeName: record.name,
             varName: record.name.toLowerCase(),
             fieldLength: record.fields.length,
-            writeItems: writeItems,
-            encodeItems: encodeItems
+            encodeItems: encodeItems,
         })
 
-        encoderDecoders += decoderItem + encoderItem;
+        encoderDecoders += typeTableItem + decoderItem + encoderItem;
 
     });
 
@@ -129,3 +157,6 @@ function buildRecordGenerator(recordMap) {
 }
 
 exports.buildRecordGenerator = buildRecordGenerator;
+
+
+

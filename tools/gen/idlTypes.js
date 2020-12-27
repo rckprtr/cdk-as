@@ -34,6 +34,18 @@ exports.toIDLType = toIDLType;
 
 
 function buildDIDFieldType(type){
+
+    // Object | null or null | Object
+    if ('options' in type) {
+
+        var objectType = type.options[0].typeName != "mock" ? type.options[0] : type.options[1];
+        var asType = buildDIDFieldType(objectType);
+        return format('opt {type}',{
+            type: asType
+        })
+
+    }
+
     //Object[]
     if (type.typeKind == 1) {
         var resultsAr = [];

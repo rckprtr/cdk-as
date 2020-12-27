@@ -1,7 +1,8 @@
 import { PipeBuffer } from "../utils/pipeBuffer";
 import * as LEB128 from "../utils/LEB128";
-import { getFloatIDLValueTypes, getIntegerIDLValueType } from "./idl/types";
+import { getFloatIDLValueTypes, getIntegerIDLValueType, TextClass } from "./idl/types";
 import { RecordRegistery } from "./recordRegistry";
+import { print } from "../api";
 
 
 const magicNumber = 'DIDL';
@@ -17,14 +18,20 @@ class Decoder {
     init(): void {
         var magic = String.UTF8.decode(this.pipe.read(magicNumber.length).buffer);
         //read type tables
+        //Im not doing anything with these yet.
+        //not sure I do need to actually
         const typeTableLength = <i32>LEB128.DecodeLEB128Unsigned(this.pipe);
         for (let i : i32 = 0; i < typeTableLength; i++) {
             const type = <i8>LEB128.DecodeLEB128Signed(this.pipe);
             switch (type) {
+                case -18 /* Opt */: {
+                    const t = LEB128.DecodeLEB128Signed(this.pipe);
+                    break;
+                }
                 case -19 /* Vector */: {
                     
                     const t = LEB128.DecodeLEB128Signed(this.pipe); //string, int, bool ...
-                    //Im not doing anything with these yet.
+                    
                     break;
                 }
                 case -20 /* Record */: {
@@ -45,11 +52,14 @@ class Decoder {
         for (let i: i32 = 0; i < inputTypesLength; i++) {
             inputTypes.push(LEB128.DecodeLEB128Signed(this.pipe) as i32);
         }
-        //TODO: Need to map the IDL types over to assist the encoder/decoder in the future
-        //this.IDLTypes = inputTypes.map<Type>(t => getType(<i32>t));
     }
 
     decode<T>(): T {
+
+        if(isNullable<T>()){
+            print("This was NULL heh");
+        }
+
         if (isBoolean<T>()) {
             //@ts-ignore
             return <T>(this.pipe.read(1)[0] != 0);
@@ -57,22 +67,19 @@ class Decoder {
         else if (isInteger<T>()) {
             //@ts-ignore
             var val:T = changetype<T>(<T>(0));
-            var idlType = getIntegerIDLValueType(val);
+            var type = getIntegerIDLValueType(val);
             
-            return <T>idlType.decodeValue<T>(this.pipe);
+            return <T>type.decodeValue<T>(this.pipe);
         }
         else if (isString<T>()) {
-            
-            const len = <i32>LEB128.DecodeLEB128Unsigned(this.pipe);
-            const buf = this.pipe.read(len);
-            //@ts-ignore
-            return <T>(String.UTF8.decode(buf.buffer));
+            var txtClass = new TextClass();
+            return <T>txtClass.decodeValue<T>(this.pipe);
         }
         else if(isFloat<T>()){
             //@ts-ignore
             var val:T = changetype<T>(<T>(0));
-            var idlType = getFloatIDLValueTypes(val);
-            return idlType.decodeValue<T>(this.pipe);
+            var type = getFloatIDLValueTypes(val);
+            return type.decodeValue<T>(this.pipe);
         }
         else if (isArray<T>()) {
             //@ts-ignore

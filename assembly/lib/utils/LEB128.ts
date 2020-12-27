@@ -1,7 +1,5 @@
-import { print } from "../api";
 import { PipeBuffer } from "./pipeBuffer";
 
-//TODO: v128 possibly since the largest dfinity float/int is 64?
 function EncodeLEB128Unsigned(value: u64): PipeBuffer {
     const pipe = new PipeBuffer();
 
@@ -88,7 +86,7 @@ function DecodeLEB128Signed(pipe: PipeBuffer): i64 {
 }
 
 function writeUIntLE(value: u64, byteLength: i8) : PipeBuffer {
-    return writeIntLE(value, byteLength); //this truncates over U_MAX_INT
+    return writeIntLE(value, byteLength);
 }
 
 function writeIntLE(value: i64, byteLength: i8) : PipeBuffer {
