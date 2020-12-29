@@ -108,6 +108,7 @@ function buildRecordMap(jsonData) {
 
                     var newItem = cloneObject(result);
                     field.isArray = isVector(field.didType);
+                    field.isOptional = isOptional(field.didType);
                     field.relationships.push(newItem);
                 }
             }
@@ -150,6 +151,11 @@ function cloneObject(object){
 function isVector(didType){
     return didType.split(' ')[0] == 'vec';
 }
+
+function isOptional(didType){
+    return didType.split(' ')[0] == 'opt';
+}
+
 
 function getBaseName(field) {
     if (field.type.typeArguments.length > 0) {

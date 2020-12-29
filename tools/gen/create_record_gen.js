@@ -5,7 +5,7 @@ var format = require("string-template");
 base_template = `
 import { Decoder } from "./lib/candid/decode";
 import { Encoder } from "./lib/candid/encode";
-import { getType, RecordClass, TextClass, Type } from "./lib/candid/idl/types";
+import { getType, RecordClass, TextClass, Type, Opt } from "./lib/candid/idl/types";
 import { RecordRegistery } from "./lib/candid/recordRegistry";
 {model_imports}
 

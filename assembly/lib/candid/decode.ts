@@ -57,7 +57,7 @@ class Decoder {
     decode<T>(): T {
 
         if(isNullable<T>()){
-            print("This was NULL heh");
+           
         }
 
         if (isBoolean<T>()) {
@@ -66,7 +66,7 @@ class Decoder {
         }
         else if (isInteger<T>()) {
             //@ts-ignore
-            var val:T = changetype<T>(<T>(0));
+            var val:T = <T>(1);
             var type = getIntegerIDLValueType(val);
             
             return <T>type.decodeValue<T>(this.pipe);
@@ -77,7 +77,7 @@ class Decoder {
         }
         else if(isFloat<T>()){
             //@ts-ignore
-            var val:T = changetype<T>(<T>(0));
+            var val:T = <T>(1);
             var type = getFloatIDLValueTypes(val);
             return type.decodeValue<T>(this.pipe);
         }

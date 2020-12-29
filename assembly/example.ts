@@ -191,18 +191,15 @@ class ExampleActor extends Actor {
 
     //@ts-ignore
     @query()
-    getUser(username: string): User {
+    getUser(username: string): User | null {
         var result: User | null = null;
         for (let x = 0; x < this.users.length; x++) {
             if(this.users[x].username == username){
                 result = this.users[x];
             }
         }
-        if(result == null){
-            return new User();
-        } else {
-            return result;
-        }
+       
+        return result;
     }
 
     //@ts-ignore
@@ -223,7 +220,7 @@ class ExampleActor extends Actor {
     @update()
     addUser(user: User): User {
         var result = this.getUser(user.username);
-        if (result.username == "") {
+        if (!result) {
             API.print("adding user: " + user.username)
             this.users.push(user);
             return user;

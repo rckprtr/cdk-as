@@ -92,6 +92,30 @@ class ConstructType extends Type {
 
 }
 
+class OptClass extends ConstructType {
+    type: Type;
+    constructor(type: Type) {
+        super();
+        this.type = type;
+    }
+
+    buildTypeTable(typeTable: TypeTable): void {
+
+        this.type.buildTypeTable(typeTable);
+
+        var pipe = new PipeBuffer();
+
+        pipe.write([0x6E]);
+        pipe.append(this.type.encodeType(typeTable))
+
+        typeTable.add(this, pipe);
+    }
+
+    get name() : string {
+        return 'opt ' + this.type.name;
+    }
+}
+
 class RecordClass extends ConstructType {
 
     fields: Array<FieldItem>;
@@ -220,7 +244,7 @@ class BoolClass extends PrimitiveType {
     encodeValue<T>(value: T): PipeBuffer {
         var pipe = new PipeBuffer();
         if (isBoolean<T>(value)) {
-            var boolBuffer = changetype<bool>(value);
+            var boolBuffer = value as bool;
             pipe.write([boolBuffer ? 1 : 0]);
         }
 
@@ -251,12 +275,12 @@ class FloatClass extends PrimitiveType {
         var pipe = new PipeBuffer();
         if (value instanceof f64) {
             var float64Array = new Float64Array(1);
-            float64Array[0] = changetype<f64>(value);
+            float64Array[0] = value as f64;
             pipe.writeArrayBuffer(float64Array.buffer);
             return pipe;
         } else if (value instanceof f32) {
             var float32Array = new Float32Array(1);
-            float32Array[0] = changetype<f32>(value);
+            float32Array[0] = value as f32;
             pipe.writeArrayBuffer(float32Array.buffer);
             return pipe;
         }
@@ -418,8 +442,14 @@ function getIntegerIDLValueType<T>(value: T): Type {
     return new FixedIntClass(64, 0x7C);
 }
 
+
 //used by arrays
-function getType<T>(): Type {
+function getType<T>(checkNull: bool = true): Type {
+
+    if(isNullable<T>() && checkNull){
+        return Opt(getType<T>(false));
+    }
+
     if (isString<T>()) {
         return new TextClass();
     }
@@ -428,12 +458,12 @@ function getType<T>(): Type {
     }
     else if (isInteger<T>()) {
         //@ts-ignore
-        var val: T = changetype<T>(<T>(0));
+        var val: T = <T>(1);
         return getIntegerIDLValueType(val);
     }
     else if (isFloat<T>()) {
         //@ts-ignore
-        var val: T = changetype<T>(<T>(0));
+        var val: T = <T>(1);
         return getFloatIDLValueTypes<T>(val);
     }
     else if(isArray<T>()){
@@ -450,7 +480,7 @@ function getType<T>(): Type {
 }
 
 function isPrimitive<T>(): bool {
-    if (isString<T>() || isBoolean<T>() || isInteger<T>()) {
+    if (isString<T>() || isBoolean<T>() || isInteger<T>() || isFloat<T>()) {
         return true;
     }
     return false;
@@ -460,6 +490,10 @@ function isPrimitive<T>(): bool {
 //helpers
 function Vec(t: Type) : Type{
     return new VecClass(t);
+}
+
+function Opt(t: Type) : Type{
+    return new OptClass(t);
 }
 
 function Record() : RecordClass{
@@ -477,6 +511,8 @@ export {
     Record,
     RecordClass,
     Vec,
+    Opt,
+    OptClass,
 
     Type,
     TypeTable,

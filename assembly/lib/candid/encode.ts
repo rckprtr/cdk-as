@@ -39,31 +39,26 @@ class Encoder {
         this.encode<T>(value);
     }
 
-    encode<T>(value: T): void {
-        // if (isNullable<T>()) {
-        //     var arrayType = getType<T>();
-        //     if (arrayType != 0) {
-        //         this.addTypeTableItem(0x6E, arrayType);
-        //     } else {
-        //         //its not a primitive and need to let the type builder decide its type
-        //         this.typeTableArray.push(new TypeTableItem(0x6E));
-        //     }
+    encode<T>(value: T, nullcheck: bool = true): void {
 
-        //     //need to get the type as a non null
-        //     if(value == null){
-        //         this.argBuffer.write([0]);
-        //         return;
-        //     }
-        // }
 
         var registry = RecordRegistery.getInstance();
 
-        if (isString<T>()) {
+        if (isNullable<T>() && nullcheck) {
+            if(value == null){
+                this.argBuffer.write([0]);
+            } else {
+                this.argBuffer.write([1]);
+                this.encode<T>(value, false);
+            }
+        }
+        else if (isString<T>()) {
             var txtClass = new TextClass();
             this.argBuffer.append(txtClass.encodeValue<T>(value));
         }
         else if (isBoolean<T>()) {
-            var boolBuffer = changetype<bool>(value);
+            //@ts-ignore
+            var boolBuffer = value as bool;
             this.argBuffer.write([boolBuffer ? 1 : 0])
         }
         else if (isInteger<T>()) {

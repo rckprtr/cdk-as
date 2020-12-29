@@ -133,7 +133,7 @@ npm run test
 ### DFINITY Types
 |  | DFX Types | AS Type |
 | --- | --- | --- |
-| :heavy_minus_sign: | `Opt` | `TBD` |
+| ✅ | `Opt` | ` Return Only <> [Basic Types can't be nullable](https://www.assemblyscript.org/types.html#type-rules) ` |
 | ✅ | `Vec` | `Array<Object> or Object[] (Supports Multi Dimensional) ` |
 | ✅ | `Record` | `Models (No Cyclical Relationships)` |
 | :heavy_minus_sign: | `Variant` | `TBD` |
