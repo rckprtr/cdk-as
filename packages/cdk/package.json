@@ -1,6 +1,6 @@
 {
   "name": "@cdk-as/cdk",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Unofficial Experimental AssemblyScript CDK for DFINITY",
   "author": "Rick Porter @rckprtr",
   "homepage": "https://github.com/rckprtr/cdk-as#readme",
