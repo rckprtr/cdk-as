@@ -1,7 +1,7 @@
 {
   "name": "@cdk-as/cli",
   "description": "A CLI for the AssemblyScript DFINITY CDK",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "author": "Rick Porter @rckprtr",
   "bin": {
     "cdk-as": "./bin/run"
@@ -11,12 +11,12 @@
     "@oclif/command": "^1.8.0",
     "@oclif/config": "^1.17.0",
     "@oclif/plugin-help": "^3.2.1",
+    "assemblyscript": "0.17.8",
     "cli-ux": "^5.5.1",
     "npm": "^6.14.11",
     "string-template": "^1.0.0",
     "ts-file-parser": "0.0.16",
-    "tslib": "^1.14.1",
-    "assemblyscript": "0.17.8"
+    "tslib": "^1.14.1"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.26.0",
