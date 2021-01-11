@@ -35,5 +35,5 @@
     "@assemblyscript/loader": "^0.17.13",
     "typescript": "^4.1.2"
   },
-  "gitHead": "96b5c9d0c6332426593b32b78f1ef46646234464"
+  "gitHead": "427ff85c4ccc7967d4b2a32e587347549c43d33d"
 }
