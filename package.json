@@ -2,8 +2,13 @@
   "name": "cdk-as",
   "version": "0.0.1",
   "description": "Unofficial Experimental AssemblyScript CDK for DFINITY",
+  "homepage": "https://github.com/rckprtr/cdk-as#readme",
   "scripts": {
-   
+    "test": "lerna run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rckprtr/cdk-as.git"
   },
   "author": "Rick Porter @rckprtr",
   "license": "Apache-2.0",

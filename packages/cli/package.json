@@ -46,12 +46,15 @@
       "@oclif/plugin-help"
     ]
   },
-  "repository": "https://github.com/rckprtr/cdk-as/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rckprtr/cdk-as/tree/master/packages/cli"
+  },
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "prepack": "rm -rf lib",
     "test": "echo NO TESTS"
   },
   "types": "lib/index.d.ts",
-  "gitHead": "35484fc7aa93e3b2ae974d29d8f18a65df0ca473"
+  "gitHead": "96b5c9d0c6332426593b32b78f1ef46646234464"
 }
