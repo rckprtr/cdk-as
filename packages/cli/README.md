@@ -19,7 +19,7 @@ $ npm install -g @cdk-as/cli
 $ cdk-as COMMAND
 running command...
 $ cdk-as (-v|--version|version)
-@cdk-as/cli/0.0.2 darwin-x64 node-v14.4.0
+@cdk-as/cli/0.0.9 darwin-x64 node-v14.4.0
 $ cdk-as --help [COMMAND]
 USAGE
   $ cdk-as COMMAND
@@ -28,16 +28,16 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`cdk-as build [FILE]`](#cdk-as-build-file)
+* [`cdk-as build`](#cdk-as-build)
 * [`cdk-as help [COMMAND]`](#cdk-as-help-command)
 
-## `cdk-as build [FILE]`
+## `cdk-as build`
 
 build as project
 
 ```
 USAGE
-  $ cdk-as build [FILE]
+  $ cdk-as build
 
 OPTIONS
   -f, --force
@@ -48,7 +48,7 @@ EXAMPLE
   $ cdk-as build
 ```
 
-_See code: [src/commands/build.ts](https://github.com/rckprtr/cdk-as/blob/v0.0.2/src/commands/build.ts)_
+_See code: [src/commands/build.ts](https://github.com/rckprtr/cdk-as/tree/master/packages/cli/blob/v0.0.9/src/commands/build.ts)_
 
 ## `cdk-as help [COMMAND]`
 

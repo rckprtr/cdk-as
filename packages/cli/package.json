@@ -52,7 +52,7 @@
   },
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
-    "prepack": "rm -rf lib",
+    "prepack": "rm -rf lib && tsc -b && oclif-dev readme",
     "test": "echo NO TESTS"
   },
   "types": "lib/index.d.ts",

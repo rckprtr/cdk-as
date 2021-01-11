@@ -21,7 +21,7 @@ export default class Build extends Command {
     force: flags.boolean({char: 'f'}),
   }
 
-  static args = [{name: 'file'}]
+  static args = []
 
   async run() {
     var data = JSON.parse(fs.readFileSync('dfx.json','utf8'));
