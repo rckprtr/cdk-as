@@ -1,7 +1,7 @@
 {
   "name": "@cdk-as/cli",
   "description": "A CLI for the AssemblyScript CDK",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "author": "Rick Porter @rckprtr",
   "bin": {
     "cdk-as": "./bin/run"
