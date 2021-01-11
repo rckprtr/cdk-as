@@ -1,7 +1,7 @@
 {
   "name": "@cdk-as/cli",
   "description": "A CLI for the AssemblyScript CLI",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "author": "Rick Porter @rckprtr",
   "bin": {
     "cdk-as": "./bin/run"
@@ -50,8 +50,8 @@
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
-    "test": "echo NO TESTS",
-    "version": "oclif-dev readme && git add README.md"
+    "test": "echo NO TESTS"
+    
   },
   "types": "lib/index.d.ts"
 }
