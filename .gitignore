@@ -117,9 +117,6 @@ dist
 
 .DS_Store
 
-# ignore generated index
-assembly/index.ts
-assembly/index.records.ts
 
 #exclude didc
 tools/didc

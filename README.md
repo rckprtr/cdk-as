@@ -2,70 +2,7 @@
 
 This is an experimental project to evaluate how AssemblyScript could be used as a CDK and should not be used for any production purposes.
 
-## Getting Started
-
-[WABT](https://github.com/WebAssembly/wabt) is needed to parse WAT files exported by the build using wat2wasm
-
-```
-brew install wabt
-```
-
-Start DFINITY in a new terminal
-```
-dfx start
-```
-
-Next install the assemblyscript dependcies
-```
-npm install
-```
-
-Finally run the example
-```
-npm run dfx_create
-npm run dfx_run
-````
-
-
-You should see in your DFINITY terminal
-```
-[Canister canid] Hello DFINITY from AssemblyScript
-[Canister canid] Hello World
-```
-
-
-## More Commands
-
-Increment counter
-```
-dfx canister call ashello increment
-```
-
-Decriment counter
-```
-dfx canister call ashello decriment
-```
-
-Get counter value in DFINITY terminal
-```
-dfx canister call ashello get_value
-```
-
-Set counter value
-```
-dfx canister call ashello set '(100)'
-```
-
-Rebuild and deploy
-```
-npm run rebuild
-```
-
-## Tests
-
-```
-npm run test
-```
+## Examples
 
 ## What is supported?
 
@@ -110,7 +47,7 @@ npm run test
 
 |  | DFX Primitive | AS Primitive |
 | --- | --- | --- |
-| :heavy_minus_sign: | `Null` | `null` |
+| ✅ | `Null` | `null` |
 | ✅ | `Bool` | `bool` |
 | :heavy_minus_sign: | `Nat` | `u∞` |
 | ✅ | `Nat8` | `u8` |
@@ -133,7 +70,7 @@ npm run test
 ### DFINITY Types
 |  | DFX Types | AS Type |
 | --- | --- | --- |
-| ✅ | `Opt` | ` Return Only <> [Basic Types can't be nullable](https://www.assemblyscript.org/types.html#type-rules) ` |
+| ✅ | `Opt` | Return Only <> [Basic Types can't be nullable](https://www.assemblyscript.org/types.html#type-rules) |
 | ✅ | `Vec` | `Array<Object> or Object[] (Supports Multi Dimensional) ` |
 | ✅ | `Record` | `Models (No Cyclical Relationships)` |
 | :heavy_minus_sign: | `Variant` | `TBD` |

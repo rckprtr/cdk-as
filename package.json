@@ -1,30 +1,21 @@
 {
   "name": "cdk-as",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "Unofficial Experimental AssemblyScript CDK for DFINITY",
   "scripts": {
-    "test": "asp --verbose --nortrace",
-    "test:ci": "asp --summary",
-    "build": "npm run build:gen && npm run build:as && node tools/update_wat.js build/ashello.wat",
-    "build:wat": "wat2wasm build/ashello.wat -o build/ashello.wasm && cp build/ashello.wasm .dfx/local/canisters/ashello/ && dfx canister install --all --mode reinstall",
-    "build:as": "asc assembly/index.ts -b build/ashello.wasm -t build/ashello.wat --runtime none --target release --use abort= --use ~lib/builtins/seed=assembly/index/dfxSeed",
-    "build:gen": "node tools/gen/parse_actors.js assembly/example.ts assembly/models.ts",
-    "rebuild": "npm run build && npm run build:wat",
-    "dfx_create": "dfx canister create ashello && mkdir -p .dfx/local/canisters/ashello/",
-    "dfx_run": "npm run build && npm run build:wat && npm run dfx_test",
-    "dfx_test": "dfx canister call ashello echo '(\"DFINITY\")'"
+   
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Rick Porter @rckprtr",
+  "license": "Apache-2.0",
   "devDependencies": {
-    "@as-pect/cli": "^5.0.0",
-    "@types/node": "^14.14.9",
-    "assemblyscript": "0.17.4"
+    "lerna": "^3.22.1",
+    "@cdk-as/cdk": "file:./packages/cdk",
+    "@cdk-as/cli": "file:./packages/cli"
   },
-  "dependencies": {
-    "@assemblyscript/loader": "^0.0.0",
-    "string-template": "^1.0.0",
-    "ts-file-parser": "0.0.16",
-    "typescript": "^4.1.2"
+  "dependencies": {},
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
   }
 }
