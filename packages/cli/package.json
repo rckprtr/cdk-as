@@ -53,5 +53,5 @@
     "test": "echo NO TESTS"
   },
   "types": "lib/index.d.ts",
-  "gitHead": "03cc253f63092ed05b746dc0e31a51e23a91c857"
+  "gitHead": "1fb405f2f7881b7b77ee66f2e06d5f4e53032cfd"
 }
