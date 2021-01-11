@@ -1,7 +1,7 @@
 {
   "name": "@cdk-as/cli",
   "description": "A CLI for the AssemblyScript CDK",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "author": "Rick Porter @rckprtr",
   "bin": {
     "cdk-as": "./bin/run"
@@ -56,5 +56,5 @@
     "test": "echo NO TESTS"
   },
   "types": "lib/index.d.ts",
-  "gitHead": "427ff85c4ccc7967d4b2a32e587347549c43d33d"
+  "gitHead": "f4b288b52e4f02e1210f6a84ceaad7afc27382bd"
 }
