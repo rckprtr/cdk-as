@@ -4,6 +4,9 @@ This is an experimental project to evaluate how AssemblyScript could be used as 
 
 ## Examples
 
+1. [Counter Example](https://github.com/rckprtr/as-dfinity-examples/tree/master/examples/counter)
+1. [Todo Example](https://github.com/rckprtr/as-dfinity-examples/tree/master/examples/todo)
+
 ## What is supported?
 
 ### DFINITY IC
