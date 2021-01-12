@@ -1,5 +1,4 @@
 import { IDL } from "./idl/types";
-import { API } from "../lib";
 import { PipeBuffer } from "../utils/pipeBuffer";
 import { RecordRegistery } from "./recordRegistry";
 import { EncodeLEB128Unsigned } from "../utils/LEB128";
@@ -83,21 +82,22 @@ class Encoder {
 
     }
 
-    build(): Uint8Array {
+    build(): Uint8Array {   
 
         var typeTable = new IDL.TypeTable();
 
         for (let i: i32 = 0; i < this.types.length; i++) {
-            var type = this.types[i];
+            let type = this.types[i];
             //if this is not here, it has issues throws a 'heap out of bounds error.'
-            var name = type.name;
+            let name = type.name;
             type.buildTypeTable(typeTable);
         }
         this.pipe.append(typeTable.encode());
         this.pipe.write([this.args]);
 
         for (let i: i32 = 0; i < this.types.length; i++) {
-            this.pipe.append(this.types[i].encodeType(typeTable));
+            let type = this.types[i];
+            this.pipe.append(type.encodeType(typeTable));
         }
 
         this.pipe.append(this.argBuffer);

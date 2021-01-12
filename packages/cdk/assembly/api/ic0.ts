@@ -1,5 +1,4 @@
 
-
 export declare function debug_print(msg : ArrayBuffer, length: i32) : void;
 
 export declare function msg_funds_available(id : ArrayBuffer, length: i32) : u64;

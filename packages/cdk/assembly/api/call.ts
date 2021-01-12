@@ -1,5 +1,7 @@
 import { Decoder } from "../candid/decode";
 import { Encoder } from "../candid/encode";
+import { API } from "../lib";
+import { Uint8ArrayToString } from "../utils";
 import * as IC from "./ic0";
 
 export namespace CALL {
@@ -39,6 +41,7 @@ export namespace CALL {
 
     export function reply(encoder: Encoder): void {
         var data = encoder.build();
+
         IC.msg_reply_data_append(data.buffer, data.byteLength);
         IC.msg_reply();
     }

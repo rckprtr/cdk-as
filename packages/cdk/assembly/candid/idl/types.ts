@@ -4,7 +4,6 @@ import { EncodeLEB128Unsigned } from '../../utils/LEB128';
 import { PipeBuffer } from '../../utils/pipeBuffer';
 import { RecordRegistery } from '../recordRegistry';
 
-
 //TODO: Map types, setup classes... a lot of things
 export namespace IDL {
 
@@ -58,13 +57,14 @@ export namespace IDL {
     export class Type {
 
         decodeValue<T>(pipe: PipeBuffer): T {
-            throw new Error("Not Implemented");
+            return changetype<T>(<T>(0));
         }
         encodeValue<T>(value: T): PipeBuffer {
-            throw new Error("Not Implemented");
+            return new PipeBuffer();
         }
 
         buildTypeTable(typeTable: TypeTable): void {
+            
         }
 
         get name(): string {
@@ -156,7 +156,6 @@ export namespace IDL {
                 pipe.append(LEB128.EncodeLEB128Unsigned(
                     idlHash(fi.name)
                 ));
-
                 pipe.append(
                     fi.type.encodeType(typeTable)
                 );
@@ -269,6 +268,7 @@ export namespace IDL {
         constructor(bits: i8, encodeType: u8) {
             super();
             this.bits = bits;
+            
         }
 
         encodeValue<T>(value: T): PipeBuffer {
@@ -315,9 +315,11 @@ export namespace IDL {
 
     export class FixedIntClass extends PrimitiveType {
         private bits: i8 = 0;
+        private encodeTypeValue: u8 = 0;
         constructor(bits: i8, encodeType: u8) {
             super();
             this.bits = bits;
+            this.encodeTypeValue = encodeType;
         }
         encodeValue<T>(value: T): PipeBuffer {
             if (this.bits == 64) {
@@ -347,8 +349,9 @@ export namespace IDL {
         }
 
         encodeType(typeTable: TypeTable): PipeBuffer {
-            const offset = <i64>Math.log2(this.bits) - 3;
-            return LEB128.EncodeLEB128Signed(-9 - offset);
+            var pipe = new PipeBuffer();
+            pipe.write([this.encodeTypeValue]);
+            return pipe;
         }
 
         get name(): string {
@@ -358,10 +361,11 @@ export namespace IDL {
 
     export class FixedNatClass extends PrimitiveType {
         private bits: i8 = 0;
-
+        private encodeTypeValue: u8 = 0;
         constructor(bits: i8, encodeType: u8) {
             super();
             this.bits = bits;
+            this.encodeTypeValue = encodeType;
         }
         encodeValue<T>(value: T): PipeBuffer {
             if (this.bits == 64) {
@@ -392,8 +396,9 @@ export namespace IDL {
         }
 
         encodeType(typeTable: TypeTable): PipeBuffer {
-            const offset = <i64>Math.log2(this.bits) - 3;
-            return LEB128.EncodeLEB128Signed(-5 - offset);
+            var pipe = new PipeBuffer();
+            pipe.write([this.encodeTypeValue]);
+            return pipe;
         }
 
         get name(): string {
