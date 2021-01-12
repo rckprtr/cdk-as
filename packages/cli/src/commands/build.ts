@@ -2,7 +2,7 @@ import {Command, flags} from '@oclif/command';
 import cli from 'cli-ux'
 import * as fs from 'fs';
 import * as child from 'child_process';
-const asc = require("assemblyscript/cli/asc");
+import * as asc from "assemblyscript/cli/asc";
 const actorParser = require("../tools/gen/parse_actors.js");
 
 export default class Build extends Command {
@@ -14,11 +14,6 @@ export default class Build extends Command {
   ]
 
   static flags = {
-    help: flags.help({char: 'h'}),
-    // flag with a value (-n, --name=VALUE)
-    name: flags.string({char: 'n', description: 'name to print'}),
-    // flag with no value (-f, --force)
-    force: flags.boolean({char: 'f'}),
   }
 
   static args = []
@@ -45,15 +40,14 @@ export default class Build extends Command {
       ], {
         stdout: process.stdout,
         stderr: process.stderr
-      }, (err:any) => {
+      }, (err: Error| null)  => {
         if (err){
-          this.log("Build Error:");
-          this.log(err);
           throw err
         } else {
           console.log("Built WAT");
           this.updateWat(dfx);
         }
+        return 0;
       })
     });
   }

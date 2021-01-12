@@ -11,7 +11,7 @@
     "@oclif/command": "^1.8.0",
     "@oclif/config": "^1.17.0",
     "@oclif/plugin-help": "^3.2.1",
-    "assemblyscript": "0.17.8",
+    "assemblyscript": "0.17.4",
     "cli-ux": "^5.5.1",
     "npm": "^6.14.11",
     "string-template": "^1.0.0",

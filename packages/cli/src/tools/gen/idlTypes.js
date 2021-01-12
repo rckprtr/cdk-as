@@ -26,6 +26,8 @@ function toIDLType(type) {
                 return "float32"
             case "f64":
                 return "float64"
+            case "boolean":
+                return "bool"
         }
     }
     return type;

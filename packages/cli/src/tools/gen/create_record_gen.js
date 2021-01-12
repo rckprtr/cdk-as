@@ -3,7 +3,7 @@ var format = require("string-template");
 
 
 base_template = `
-import { RecordRegistery, IDL } from "@cdk-as/cdk";
+import { RecordRegistery, IDL, Encoder, Decoder } from "@cdk-as/cdk";
 {model_imports}
 
 export function initRegistry() : RecordRegistery {
@@ -23,13 +23,13 @@ register_template = "\tregistry.registerHandler<{typeName}>({typeName}Record,{ty
 
 
 typetable_template = `
-function {typeName}Record(): RecordClass {
-    var record = new RecordClass()
+function {typeName}Record(): IDL.RecordClass {
+    var record = new IDL.RecordClass()
 {writeItems}
     return record;
 }
 `
-encoder_write_item = '\t\t.add("{field}", getType<{type}>())\n'
+encoder_write_item = '\t\t.add("{field}", IDL.getType<{type}>())\n'
 
 encoder_write_relationship_item = '\t\t.add("{field}", {typeName}Record())\n'
 
