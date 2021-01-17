@@ -6,7 +6,7 @@ This is an experimental project to evaluate how AssemblyScript could be used as 
 
 1. [Counter Example](https://github.com/rckprtr/as-dfinity-examples/tree/master/examples/counter)
 1. [Todo Example](https://github.com/rckprtr/as-dfinity-examples/tree/master/examples/todo)
-
+1. [Phonebook Web Example](https://github.com/rckprtr/as-dfinity-examples/tree/master/examples/phonebook)
 ## What is supported?
 
 ### DFINITY IC
@@ -70,7 +70,7 @@ This is an experimental project to evaluate how AssemblyScript could be used as 
 
 * For Int/Nat AS currently does not have an arbitrary length integer
 
-### DFINITY Types
+### Candid Types
 |  | DFX Types | AS Type |
 | --- | --- | --- |
 | ✅ | `Opt` | Return Only <> [Basic Types can't be nullable](https://www.assemblyscript.org/types.html#type-rules) |
