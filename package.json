@@ -6,6 +6,11 @@
   "scripts": {
     "test": "lerna run test"
   },
+  "keywords": [
+    "dfinity",
+    "cdk",
+    "assemblyscript"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/rckprtr/cdk-as.git"

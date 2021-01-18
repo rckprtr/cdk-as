@@ -18,11 +18,18 @@ export default class Build extends Command {
 
   static args = []
 
+  outputDir = 'build';
+
   async run() {
     var data = JSON.parse(fs.readFileSync('dfx.json','utf8'));
+
+    if (!fs.existsSync(this.outputDir)){
+      fs.mkdirSync(this.outputDir);
+    }
+
     var canisterName = Object.keys(data.canisters)[0]
     actorParser.parse(canisterName, `assembly/${canisterName}.ts`, 'assembly/models.ts')
-    await cli.wait(3000) //need to fix this.
+    await cli.wait(3000) //TODO: need to fix this.
     this.buildAsc(data);
   }
 
@@ -36,7 +43,8 @@ export default class Build extends Command {
         "--runtime", "none",
         "--use", "abort= ",
         "--use", "~lib/builtins/seed=assembly/index/dfxSeed",
-        "--target", "release"
+        "--target", "release",
+        "--transform","./node_modules/@cdk-as/cdk/transform/index.js"
       ], {
         stdout: process.stdout,
         stderr: process.stderr
@@ -44,50 +52,10 @@ export default class Build extends Command {
         if (err){
           throw err
         } else {
-          console.log("Built WAT");
-          this.updateWat(dfx);
+          console.log("Built WASM");
         }
         return 0;
       })
-    });
-  }
-
-  async updateWat(dfx: any) {
-    var canisterName = Object.keys(dfx.canisters)[0]
-    fs.readFile(`build/${canisterName}.wat`, 'utf8',  (err,data) => {
-      if (err) {
-        return console.log(err);
-      }
-      
-      //@externals should be extended to support spaces in export names
-      var search = "export \"canister_update_";
-      var replacer = new RegExp(search, 'g')
-      data = data.replace(replacer, "export \"canister_update ",)
-  
-      //@externals should be extended to support spaces in export names
-      search = "export \"canister_query_";
-      replacer = new RegExp(search, 'g')
-      data = data.replace(replacer, "export \"canister_query ",)
-  
-      //commas ',' are illegal characters in WAT so 
-      //just replace it with a 0x2C ASCII representation
-      search = ","; 
-      replacer = new RegExp(search, 'g')
-      data = data.replace(replacer, "%2C",)
-  
-      fs.writeFile(`build/${canisterName}.wat`, data,  (err) => {
-          if (err) return console.log("WAT update error:",err);
-          this.buildWat(dfx);
-        });
-    });
-    
-  }
-
-  async buildWat(dfx: any){
-    var canisterName = Object.keys(dfx.canisters)[0];
-    var foo: child.ChildProcess = child.exec(`wat2wasm ./build/${canisterName}.wat -o build/${canisterName}.wasm`, (error: any, stdout: string, stderr: string) => {
-      this.log(("Built WASM"))
-      //this.log("Info:", error, stdout, stderr);      
     });
   }
 }

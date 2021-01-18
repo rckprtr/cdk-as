@@ -72,6 +72,7 @@ export function canister_init(): void {
 `
 
     var canister_method_template = `
+@exportAs("{func_type} {func_name}")
 export function {func_type}_{func_name}(): void {
     //recieve inputs
     {recieve}
